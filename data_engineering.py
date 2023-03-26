@@ -32,15 +32,13 @@ class DataEngineering:
         """
         start_time = time.time()
 
-        # # Check arguments.
-        # if len(sys.argv) != 2:
-        #     print('Please provide an input directory.')
-        #     return
-        #
-        # # Get the local directory.
-        # local_dir = sys.argv[1]
+        # Check arguments.
+        if len(sys.argv) != 2:
+            print('Please provide an input directory.')
+            return
 
-        local_dir = r'/Users/burak/Qiime2/SRA_Toolkit_Trials/temp'
+        # Get the local directory.
+        local_dir = sys.argv[1]
 
         self.logger.info('Generating a study.')
         study = Study(local_dir)

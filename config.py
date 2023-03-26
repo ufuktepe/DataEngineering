@@ -2,14 +2,14 @@ import os
 import yaml
 
 
-CONFIG_PATH = './config.yaml'
-CLASSIFIER_PATH = 'classifier_path'
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
+CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 LOGGER_NAME = 'logger_name'
 LOGGER_PATH = 'logger_path'
 META_DATA_EXT = 'meta_data_ext'
 LAYOUT_TITLE = 'layout_title'
-CONFIG_KEYS = {CLASSIFIER_PATH, ENV, LOGGER_NAME, LOGGER_PATH, META_DATA_EXT, LAYOUT_TITLE}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_NAME, LOGGER_PATH, META_DATA_EXT, LAYOUT_TITLE}
 
 
 class Config:
@@ -41,9 +41,9 @@ class Config:
 
     @property
     def classifier_path(self):
-        if CLASSIFIER_PATH not in self.config:
+        if CLASSIFIER_FILE_NAME not in self.config:
             return None
-        return self.config[CLASSIFIER_PATH]
+        return os.path.join(os.path.dirname(__file__), 'static', self.config[CLASSIFIER_FILE_NAME])
 
     @property
     def env(self):

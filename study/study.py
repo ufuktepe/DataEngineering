@@ -112,7 +112,7 @@ class Study:
             file_name = os.path.basename(file_path)
 
             # Skip the file if the file name has no underscores.
-            if '_' not in file_name:
+            if '_' not in file_name and self.layout == Layout.PAIRED:
                 continue
 
             sample_name = file_name.split('_')[0]

@@ -1,5 +1,5 @@
   # Path for the classifier.
-- classifier_path: /Users/burak/PycharmProjects/DataEngineering/static/gg-13-8-99-515-806-nb-classifier.qza
+- classifier_file_name: gg-13-8-99-515-806-nb-classifier.qza
 
   # Qiime2 environment name.
   env: qiime2-2022.11

@@ -120,3 +120,29 @@
 {"name": "data_engineering", "asctime": "2023-03-23T04:54:25Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running Taxonomy Analysis..."}
 {"name": "data_engineering", "asctime": "2023-03-23T04:54:41Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Taxonomy Analysis Results..."}
 {"name": "data_engineering", "asctime": "2023-03-23T04:54:48Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 61, "message": "Process Completed. Runtime: 0h:1m:10s"}
+{"name": "data_engineering", "asctime": "2023-03-26T14:01:06Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 43, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:01:06Z", "levelname": "CRITICAL", "filename": "data_engineering.py", "lineno": 48, "message": "No metadata found!\nStudy Dir: /Users/burak/Qiime2/SRA_Toolkit_Trials/temp"}
+{"name": "data_engineering", "asctime": "2023-03-26T14:01:35Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 43, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:01:35Z", "levelname": "CRITICAL", "filename": "data_engineering.py", "lineno": 48, "message": "Unable to generate manifest file!\nStudy Dir: /Users/burak/Qiime2/SRA_Toolkit_Trials/temp"}
+{"name": "data_engineering", "asctime": "2023-03-26T14:02:40Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 45, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:04:55Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 45, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:04:55Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 53, "message": "Generating a Qiime2 pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:04:55Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 60, "message": "Executing the pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:04:55Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Importing into Qiime2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:05:23Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running DADA2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:11:45Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 45, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:11:45Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 53, "message": "Generating a Qiime2 pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:11:45Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 60, "message": "Executing the pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:11:45Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Importing into Qiime2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:12:08Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running DADA2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:13:01Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 45, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:13:01Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 53, "message": "Generating a Qiime2 pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:13:01Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 60, "message": "Executing the pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:13:01Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Importing into Qiime2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:13:25Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running DADA2..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:29:32Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting the Feature Table..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:29:40Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Converting the Feature Table to tsv..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:29:42Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Representative Sequences..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:29:50Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running Taxonomy Analysis..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:30:23Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Taxonomy Analysis Results..."}
+{"name": "data_engineering", "asctime": "2023-03-26T14:30:31Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 63, "message": "Process Completed. Runtime: 0h:17m:30s"}

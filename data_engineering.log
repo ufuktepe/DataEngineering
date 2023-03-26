@@ -109,3 +109,14 @@
 {"name": "data_engineering", "asctime": "2023-03-20T17:07:51Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running Taxonomy Analysis..."}
 {"name": "data_engineering", "asctime": "2023-03-20T17:08:13Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Taxonomy Analysis Results..."}
 {"name": "data_engineering", "asctime": "2023-03-20T17:08:27Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 61, "message": "Process Completed. Runtime: 0h:1m:42s"}
+{"name": "data_engineering", "asctime": "2023-03-23T04:53:38Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 43, "message": "Generating a study."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:53:38Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 51, "message": "Generating a Qiime2 pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:53:38Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 58, "message": "Executing the pipeline."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:53:38Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Importing into Qiime2..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:53:50Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running DADA2..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:08Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting the Feature Table..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:15Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Converting the Feature Table to tsv..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:18Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Representative Sequences..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:25Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Running Taxonomy Analysis..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:41Z", "levelname": "INFO", "filename": "pipeline.py", "lineno": 73, "message": "Exporting Taxonomy Analysis Results..."}
+{"name": "data_engineering", "asctime": "2023-03-23T04:54:48Z", "levelname": "INFO", "filename": "data_engineering.py", "lineno": 61, "message": "Process Completed. Runtime: 0h:1m:10s"}

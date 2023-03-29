@@ -38,6 +38,15 @@ def create_dir(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
 
+def copy_file(src, dst):
+    """
+    Copy the file from src to dst. Raise OSError if unsuccessful.
+    """
+    try:
+        shutil.copy(src, dst)
+    except:
+        raise OSError
+
 def get_runtime(start_time):
     """
     Compute the runtime based on the given start time and return it as a string.
@@ -52,6 +61,9 @@ def get_runtime(start_time):
     return '%dh:%dm:%ds' % (hours, mins, secs)
 
 def setup_logger(logger_name, logger_path):
+    """
+    Create a logger and return it.
+    """
     logger = logging.getLogger(logger_name)
 
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
@@ -71,3 +83,27 @@ def setup_logger(logger_name, logger_path):
     logger.setLevel(logging.DEBUG)
 
     return logger
+
+def is_study_ready(file_names):
+    """
+    Check if the given list of file names include a csv file, a fastq file, a complete.txt file and doesn't include a
+    processed.txt file. If so then return true. Otherwise, return false.
+    """
+    has_csv = False
+    is_download_complete = False
+    has_fastq = False
+
+    for file_name in file_names:
+        if file_name.endswith('.csv'):
+            has_csv = True
+        elif file_name.endswith('.fastq'):
+            has_fastq = True
+        elif file_name == 'complete.txt':
+            is_download_complete = True
+        elif file_name == 'processed.txt':
+            return False
+
+        if has_csv and is_download_complete and has_fastq:
+            return True
+
+    return False

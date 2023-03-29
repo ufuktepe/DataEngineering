@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 from config import config
 from study.invalid_study_error import InvalidStudyError
@@ -18,6 +19,7 @@ class Study:
 
     def __init__(self, parent_dir):
         self.parent_dir = parent_dir  # Parent directory for the study.
+        self.id = None                # Run ID for the study
         self.metadata_path = None     # File path for the metadata file.
         self.manifest_path = None     # File path for the manifest file.
         self.layout = None            # Sequencing layout, single-end or paired-end reads.
@@ -31,6 +33,8 @@ class Study:
         # Verify the directory is a valid path.
         if not os.path.isdir(self.parent_dir):
             raise InvalidStudyError(msg=f'{self.parent_dir} is an invalid directory!', parent_dir=self.parent_dir)
+
+        self.id = os.path.basename(self.parent_dir)
 
         # Identify the file path for metadata.
         try:
@@ -84,16 +88,25 @@ class Study:
         Extract the sequencing layout from the metadata and return it. Raise a ValueError if layout cannot be
         identified.
         """
-        with open(self.metadata_path) as csv_file:
-            # Create a dictionary from the csv file.
-            for metadata_dict in csv.DictReader(csv_file):
-                layout = metadata_dict.get(config.layout_title, '').lower()
-                if layout == Layout.SINGLE:
-                    return Layout.SINGLE
-                elif layout == Layout.PAIRED:
-                    return Layout.PAIRED
+        # Create a metadata dictionary
+        metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
 
-                raise ValueError
+        # Verify that the metadata includes a layout column
+        if config.layout_title not in metadata:
+            raise ValueError
+
+        # Verify that the metadata includes the study id
+        if self.id not in metadata[config.layout_title]:
+            raise ValueError
+
+        layout = metadata[config.layout_title][self.id].lower()
+
+        if layout == Layout.SINGLE:
+            return Layout.SINGLE
+        elif layout == Layout.PAIRED:
+            return Layout.PAIRED
+
+        raise ValueError
 
     def map_samples_to_files(self):
         """

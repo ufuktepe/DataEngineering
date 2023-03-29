@@ -15,6 +15,7 @@ class Pipeline(ABC):
 
     def __init__(self, study):
         self.logger = logging.getLogger('data_engineering')
+        self.id = study.id                                              # ID for the pipeline (same as study ID)
         self.output_dir = os.path.join(study.get_dir(), 'output')       # Directory for Qiime2 results.
         self.manifest_path = study.get_manifest_path()                  # Path for the manifest file.
         self.demux_path = self.build_path('demux.qza')                  # Path for demultiplexed Qiime2 artifact.
@@ -33,29 +34,29 @@ class Pipeline(ABC):
         # Command to export a qza feature table in biom format.
         self.commands.append(ExportCmd(input_path=self.qza_table_path,
                                        output_path=self.output_dir,
-                                       msg='Exporting the Feature Table...'))
+                                       msg=f'{self.id} | Exporting the Feature Table.'))
 
         # Command to convert a biom feature table to tsv.
         self.commands.append(BiomConvertCmd(input_path=self.biom_table_path,
                                             output_path=self.tsv_table_path,
                                             output_format=FileFormat.TSV,
-                                            msg='Converting the Feature Table to tsv...'))
+                                            msg=f'{self.id} | Converting the Feature Table to tsv.'))
 
         # Command to export representative sequences in fasta format.
         self.commands.append(ExportCmd(input_path=self.rep_seqs_path,
                                        output_path=self.output_dir,
-                                       msg='Exporting Representative Sequences...'))
+                                       msg=f'{self.id} | Exporting Representative Sequences.'))
 
         # Command to execute taxonomy analysis.
         self.commands.append(FeatureClassifierCmd(input_path=self.rep_seqs_path,
                                                   classifier_path=config.classifier_path,
                                                   output_path=self.taxonomy_path,
-                                                  msg='Running Taxonomy Analysis...'))
+                                                  msg=f'{self.id} | Running Taxonomy Analysis.'))
 
         # Command to export taxonomy analysis results.
         self.commands.append(ExportCmd(input_path=self.taxonomy_path,
                                        output_path=self.output_dir,
-                                       msg='Exporting Taxonomy Analysis Results...'))
+                                       msg=f'{self.id} | Exporting Taxonomy Analysis Results.'))
 
     def build_path(self, f_name):
         """

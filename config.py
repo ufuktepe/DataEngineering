@@ -75,4 +75,5 @@ class Config:
             return None
         return self.config[LAYOUT_TITLE]
 
+# Singleton
 config = Config()

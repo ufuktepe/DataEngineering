@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 
@@ -28,37 +29,51 @@ class DataEngineering:
 
     def run(self):
         """
-        Create a study from the user provided directory. Then create a Qiime2 pipeline and execute it.
+        Constantly crawl the given directory to find downloaded studies. Process all studies that are ready to be
+        processed.
         """
-        start_time = time.time()
-
         # Check arguments.
         if len(sys.argv) != 2:
             print('Please provide an input directory.')
             return
 
-        # Get the local directory.
-        local_dir = sys.argv[1]
+        # Get the directory.
+        directory = sys.argv[1]
 
-        self.logger.info('Generating a study.')
-        study = Study(local_dir)
+        while True:
+            for root, sub_dirs, file_names in os.walk(directory):
+                if utils.is_study_ready(file_names):
+                    self.process_study(root)
+
+    def process_study(self, directory):
+        """
+        Create a study from the user provided directory. Then create a Qiime2 pipeline and execute it.
+        """
+        start_time = time.time()
+
+        self.logger.info(f'Processing {os.path.basename(directory)}')
+        study = Study(directory)
         try:
             study.setup()
         except InvalidStudyError as e:
             self.logger.critical(e)
             return
 
-        self.logger.info('Generating a Qiime2 pipeline.')
+        self.logger.info(f'{study.id} | Generating a Qiime2 pipeline.')
         try:
             pipeline = PipelineFactory.generate_pipeline(study)
         except InvalidStudyError as e:
             self.logger.critical(e)
             return
 
-        self.logger.info('Executing the pipeline.')
+        self.logger.info(f'{study.id} | Executing the pipeline.')
         pipeline.execute()
 
-        self.logger.info(f'Process Completed. Runtime: {utils.get_runtime(start_time)}')
+        self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
+
+        with open(os.path.join(directory, 'processed.txt'), 'w') as _:
+            pass
+
 
 def main():
     data_engineering = DataEngineering()

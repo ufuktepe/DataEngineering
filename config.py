@@ -1,15 +1,12 @@
 import os
-import yaml
 
+import yaml
 
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
-LOGGER_NAME = 'logger_name'
 LOGGER_PATH = 'logger_path'
-META_DATA_EXT = 'meta_data_ext'
-LAYOUT_TITLE = 'layout_title'
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_NAME, LOGGER_PATH, META_DATA_EXT, LAYOUT_TITLE}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH}
 
 
 class Config:
@@ -47,33 +44,12 @@ class Config:
 
     @property
     def env(self):
-        if ENV not in self.config:
-            return None
-        return self.config[ENV]
-
-    @property
-    def logger_name(self):
-        if LOGGER_NAME not in self.config:
-            return None
-        return self.config[LOGGER_NAME]
+        return self.config.get(ENV, None)
 
     @property
     def logger_path(self):
-        if LOGGER_PATH not in self.config:
-            return None
-        return self.config[LOGGER_PATH]
+        return self.config.get(LOGGER_PATH, None)
 
-    @property
-    def meta_data_ext(self):
-        if META_DATA_EXT not in self.config:
-            return None
-        return self.config[META_DATA_EXT]
-
-    @property
-    def layout_title(self):
-        if LAYOUT_TITLE not in self.config:
-            return None
-        return self.config[LAYOUT_TITLE]
 
 # Singleton
 config = Config()

@@ -1,12 +1,16 @@
+#!/usr/bin/env python
+
 import os
 import sys
 import time
 
+import utils
 from config import config
 from pipeline import PipelineFactory
-from study import Study
+from pipeline.pipeline_error import PipelineError
+from static import constants as const
 from study import InvalidStudyError
-import utils
+from study import Study
 
 
 class DataEngineering:
@@ -25,7 +29,9 @@ class DataEngineering:
         except FileExistsError as e:
             raise ValueError(e)
 
-        self.logger = utils.setup_logger(config.logger_name, config.logger_path)
+        print(config.logger_path)
+
+        self.logger = utils.setup_logger(const.LOGGER_NAME, config.logger_path)
 
     def run(self):
         """
@@ -40,9 +46,15 @@ class DataEngineering:
         # Get the directory.
         directory = sys.argv[1]
 
+        # Validate the directory.
+        if not os.path.isdir(directory):
+            print('Please provide a valid directory.')
+            return
+
+        print(f'Monitoring {directory}')
         while True:
             for root, sub_dirs, file_names in os.walk(directory):
-                if utils.is_study_ready(file_names):
+                if Study.is_ready_for_processing(file_names):
                     self.process_study(root)
 
     def process_study(self, directory):
@@ -57,22 +69,27 @@ class DataEngineering:
             study.setup()
         except InvalidStudyError as e:
             self.logger.critical(e)
+            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
             return
 
-        self.logger.info(f'{study.id} | Generating a Qiime2 pipeline.')
+        self.logger.debug(f'{study.id} | Generating a Qiime2 pipeline.')
         try:
             pipeline = PipelineFactory.generate_pipeline(study)
         except InvalidStudyError as e:
             self.logger.critical(e)
+            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
             return
 
-        self.logger.info(f'{study.id} | Executing the pipeline.')
-        pipeline.execute()
+        self.logger.debug(f'{study.id} | Executing the pipeline.')
+        try:
+            pipeline.execute()
+        except PipelineError as e:
+            self.logger.error(f'{e.study_id} | {e.msg}')
+            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
+
 
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
-
-        with open(os.path.join(directory, 'processed.txt'), 'w') as _:
-            pass
+        utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
 
 
 def main():

@@ -1,10 +1,10 @@
+import logging
 import os
-import sys
 import shutil
 import subprocess
+import sys
 import time
 
-import logging
 from pythonjsonlogger import jsonlogger
 
 
@@ -80,30 +80,13 @@ def setup_logger(logger_name, logger_path):
     logger.addHandler(stdout_handler)
     logger.addHandler(file_handler)
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     return logger
 
-def is_study_ready(file_names):
+def create_empty_txt(file_path):
     """
-    Check if the given list of file names include a csv file, a fastq file, a complete.txt file and doesn't include a
-    processed.txt file. If so then return true. Otherwise, return false.
+    Create an empty text file.
     """
-    has_csv = False
-    is_download_complete = False
-    has_fastq = False
-
-    for file_name in file_names:
-        if file_name.endswith('.csv'):
-            has_csv = True
-        elif file_name.endswith('.fastq'):
-            has_fastq = True
-        elif file_name == 'complete.txt':
-            is_download_complete = True
-        elif file_name == 'processed.txt':
-            return False
-
-        if has_csv and is_download_complete and has_fastq:
-            return True
-
-    return False
+    with open(file_path, 'w') as _:
+        pass

@@ -3,9 +3,9 @@ class InvalidStudyError(Exception):
     Exception to indicate an invalid study.
     """
 
-    def __init__(self, msg, parent_dir):
+    def __init__(self, msg, study_id):
         self.msg = msg
-        self.parent_dir = parent_dir
+        self.study_id = study_id
 
     def __str__(self):
-        return f'{self.msg}\nStudy Dir: {self.parent_dir}'
+        return f'{self.study_id} | {self.msg}'

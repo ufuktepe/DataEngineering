@@ -23,11 +23,11 @@ class DemuxSinglePipeline(Pipeline):
                                        input_path=self.manifest_path,
                                        output_path=self.demux_path,
                                        input_format=InputFormat.SINGLE_PHRED_33,
-                                       msg='Importing into Qiime2...'))
+                                       msg=f'{self.id} | Importing into Qiime2.'))
 
         self.commands.append(SingleDenoiseCmd(input_path=self.demux_path,
                                               trunc_pos=0,
                                               output_path=self.qza_table_path,
                                               rep_seqs_path=self.rep_seqs_path,
                                               stats_path=self.stats_path,
-                                              msg='Running DADA2...'))
+                                              msg=f'{self.id} | Running DADA2.'))

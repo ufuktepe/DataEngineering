@@ -4,14 +4,7 @@
   # Qiime2 environment name.
   env: qiime2-2022.11
 
-  # Logger name for the data engineering module.
-  logger_name: data_engineering
-
   # File path for the log file.
   logger_path: data_engineering.log
 
-  # Extension for the metadata file.
-  meta_data_ext: csv
 
-  # Title of the layout column in the metadata file.
-  layout_title: LibraryLayout

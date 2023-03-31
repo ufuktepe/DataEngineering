@@ -32,7 +32,7 @@ class Study:
         """
         # Verify the directory is a valid path.
         if not os.path.isdir(self.parent_dir):
-            raise InvalidStudyError(msg=f'{self.parent_dir} is an invalid directory!', parent_dir=self.parent_dir)
+            raise InvalidStudyError(msg=f'{self.parent_dir} is an invalid directory!', study_id=self.id)
 
         self.id = os.path.basename(self.parent_dir)
 
@@ -40,19 +40,19 @@ class Study:
         try:
             self.metadata_path = self.get_metadata()
         except FileNotFoundError:
-            raise InvalidStudyError(msg='No metadata found!', parent_dir=self.parent_dir)
+            raise InvalidStudyError(msg='No metadata found!', study_id=self.id)
 
         # Identify the sequencing layout (SINGLE or PAIRED).
         try:
             self.layout = self.extract_layout()
         except ValueError:
-            raise InvalidStudyError(msg='Unable to identify the sequencing layout type!', parent_dir=self.parent_dir)
+            raise InvalidStudyError(msg='Unable to identify the sequencing layout type!', study_id=self.id)
 
         # Generate the manifest file.
         try:
             self.manifest_path = self.generate_manifest_file()
         except FileNotFoundError:
-            raise InvalidStudyError(msg='Unable to generate manifest file!', parent_dir=self.parent_dir)
+            raise InvalidStudyError(msg='Unable to generate manifest file!', study_id=self.id)
 
     def get_dir(self):
         """

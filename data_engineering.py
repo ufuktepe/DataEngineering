@@ -29,9 +29,9 @@ class DataEngineering:
         except FileExistsError as e:
             raise ValueError(e)
 
-        print(config.logger_path)
-
-        self.logger = utils.setup_logger(const.LOGGER_NAME, config.logger_path)
+        self.logger = utils.setup_logger(logger_name=const.LOGGER_NAME,
+                                         logger_path=config.logger_path,
+                                          logging_level=config.logging_level)
 
     def run(self):
         """
@@ -63,7 +63,7 @@ class DataEngineering:
         """
         start_time = time.time()
 
-        self.logger.info(f'Processing {os.path.basename(directory)}')
+        self.logger.debug(f'Processing {os.path.basename(directory)}')
         study = Study(directory)
         try:
             study.setup()
@@ -86,7 +86,7 @@ class DataEngineering:
         except PipelineError as e:
             self.logger.error(f'{e.study_id} | {e.msg}')
             utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
-
+            return
 
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
         utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))

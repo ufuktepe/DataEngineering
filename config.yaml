@@ -5,6 +5,9 @@
   env: qiime2-2022.11
 
   # File path for the log file.
-  logger_path: data_engineering.log
+  logger_path: data_engineering_2.log
+
+  # Logging level for the logger (CRITICAL, ERROR, WARNING, INFO, DEBUG, or NOTSET)
+  logging_level: INFO
 
 

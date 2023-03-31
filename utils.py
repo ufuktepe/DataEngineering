@@ -60,7 +60,7 @@ def get_runtime(start_time):
 
     return '%dh:%dm:%ds' % (hours, mins, secs)
 
-def setup_logger(logger_name, logger_path):
+def setup_logger(logger_name, logger_path, logging_level):
     """
     Create a logger and return it.
     """
@@ -80,7 +80,7 @@ def setup_logger(logger_name, logger_path):
     logger.addHandler(stdout_handler)
     logger.addHandler(file_handler)
 
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging_level)
 
     return logger
 

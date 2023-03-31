@@ -6,7 +6,9 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 LOGGER_PATH = 'logger_path'
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH}
+LOGGING_LEVEL = 'logging_level'
+LOGGING_LEVELS = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20, 'DEBUG': 10, 'NOTSET': 0}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH, LOGGING_LEVEL}
 
 
 class Config:
@@ -26,7 +28,7 @@ class Config:
         with open(CONFIG_PATH, 'r') as yaml_file:
             config_data = yaml.safe_load(yaml_file)
             if not config_data:
-                raise ValueError('Invalid configuration file!')
+                raise ValueError(f'Configuration file error!')
             self.config = config_data[0]
 
         self.validate()
@@ -34,7 +36,12 @@ class Config:
     def validate(self):
         for key in self.config.keys():
             if key not in CONFIG_KEYS:
-                raise ValueError('Invalid configuration file!')
+                raise ValueError(f'Configuration file error! Invalid key: {key}')
+
+        # Validate the logging level
+        level = self.config[LOGGING_LEVEL].upper()
+        if level not in LOGGING_LEVELS:
+            raise ValueError(f'Configuration file error! Invalid logging level: {level}')
 
     @property
     def classifier_path(self):
@@ -49,6 +56,13 @@ class Config:
     @property
     def logger_path(self):
         return self.config.get(LOGGER_PATH, None)
+
+    @property
+    def logging_level(self):
+        if LOGGING_LEVEL not in self.config:
+            return None
+        level = self.config[LOGGING_LEVEL].upper()
+        return LOGGING_LEVELS.get(level, None)
 
 
 # Singleton

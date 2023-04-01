@@ -1,6 +1,6 @@
-from pipeline.commands.import_cmd import ImportCmd
-from pipeline.commands.paired_denoise_cmd import PairedDenoiseCmd
-from pipeline.pipeline import Pipeline
+from .commands.import_cmd import ImportCmd
+from .commands.paired_denoise_cmd import PairedDenoiseCmd
+from .pipeline import Pipeline
 from static.input_format import InputFormat
 from static.semantic_type import SemanticType
 

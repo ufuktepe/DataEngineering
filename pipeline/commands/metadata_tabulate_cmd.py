@@ -1,4 +1,4 @@
-from pipeline.commands.command import Command
+from .command import Command
 
 
 class MetadataTabulateCmd(Command):

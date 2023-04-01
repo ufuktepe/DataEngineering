@@ -1,1 +1,0 @@
-from pipeline.pipeline_factory import PipelineFactory

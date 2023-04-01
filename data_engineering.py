@@ -5,7 +5,7 @@ import sys
 import time
 
 from config import config
-from pipeline import PipelineFactory
+from pipeline.pipeline_factory import PipelineFactory
 from pipeline.pipeline_error import PipelineError
 from static import constants as const
 from study import InvalidStudyError

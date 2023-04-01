@@ -1,5 +1,5 @@
-from pipeline.demux_paired_pipeline import DemuxPairedPipeline
-from pipeline.demux_single_pipeline import DemuxSinglePipeline
+from .demux_paired_pipeline import DemuxPairedPipeline
+from .demux_single_pipeline import DemuxSinglePipeline
 from static.layout import Layout
 from study.study import InvalidStudyError
 

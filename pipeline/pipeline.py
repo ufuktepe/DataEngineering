@@ -3,12 +3,12 @@ import logging
 import os
 
 from config import config
-from pipeline.commands.biom_convert_cmd import BiomConvertCmd
-from pipeline.commands.export_cmd import ExportCmd
-from pipeline.commands.feature_classifier_cmd import FeatureClassifierCmd
-from pipeline.commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
-from pipeline.commands.metadata_tabulate_cmd import MetadataTabulateCmd
-from pipeline.pipeline_error import PipelineError
+from .commands.biom_convert_cmd import BiomConvertCmd
+from .commands.export_cmd import ExportCmd
+from .commands.feature_classifier_cmd import FeatureClassifierCmd
+from .commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
+from .commands.metadata_tabulate_cmd import MetadataTabulateCmd
+from .pipeline_error import PipelineError
 from static.file_format import FileFormat
 import utils
 

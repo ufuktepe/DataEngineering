@@ -1,10 +1,10 @@
 import os
 
-from pipeline.commands.feature_table_merge_cmd import FeatureTableMergeCmd
-from pipeline.commands.feature_table_merge_taxa_cmd import FeatureTableMergeTaxaCmd
-from pipeline.commands.taxa_bar_plot_cmd import TaxaBarPlotCmd
-from pipeline.commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
-import utils
+from .pipeline.commands.feature_table_merge_cmd import FeatureTableMergeCmd
+from .pipeline.commands.feature_table_merge_taxa_cmd import FeatureTableMergeTaxaCmd
+from .pipeline.commands.taxa_bar_plot_cmd import TaxaBarPlotCmd
+from .pipeline.commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
+from . import utils
 
 
 def run(studies, output_dir, env):

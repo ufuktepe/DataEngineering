@@ -1,11 +1,12 @@
 import csv
+import os
 
 import pandas as pd
 
+from .invalid_study_error import InvalidStudyError
 from static import constants as const
 from static.layout import Layout
-from study.invalid_study_error import InvalidStudyError
-from utils import *
+import utils
 
 # Define titles for the manifest file.
 MANIFEST_TITLES = {Layout.SINGLE: ['sample-id', 'absolute-filepath'],
@@ -118,7 +119,7 @@ class Study:
         samples_to_files = {}
 
         # Get fastq file paths in the parent directory
-        file_paths = get_file_paths(self.parent_dir, ext='fastq')
+        file_paths = utils.get_file_paths(self.parent_dir, ext='fastq')
 
         # Iterate over each file and populate the samples_to_files dictionary.
         for file_path in file_paths:

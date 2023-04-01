@@ -60,14 +60,14 @@ def get_runtime(start_time):
 
     return '%dh:%dm:%ds' % (hours, mins, secs)
 
-def setup_logger(logger_name, logger_path, logging_level):
+def setup_logger(logger_name, logging_level):
     """
     Create a logger and return it.
     """
     logger = logging.getLogger(logger_name)
 
     stdout_handler = logging.StreamHandler(stream=sys.stdout)
-    file_handler = logging.FileHandler(logger_path)
+    file_handler = logging.FileHandler(logger_name + '.log')
 
     stdout_format = logging.Formatter("%(name)s: %(asctime)s | %(levelname)s | %(filename)s:%(lineno)s | %(message)s")
 

@@ -4,13 +4,16 @@ import os
 import sys
 import time
 
-import utils
 from config import config
 from pipeline import PipelineFactory
 from pipeline.pipeline_error import PipelineError
 from static import constants as const
 from study import InvalidStudyError
 from study import Study
+import utils
+
+
+LOGGER_NAME = 'data_engineering'
 
 
 class DataEngineering:
@@ -29,9 +32,7 @@ class DataEngineering:
         except FileExistsError as e:
             raise ValueError(e)
 
-        self.logger = utils.setup_logger(logger_name=const.LOGGER_NAME,
-                                         logger_path=config.logger_path,
-                                          logging_level=config.logging_level)
+        self.logger = utils.setup_logger(logger_name=LOGGER_NAME, logging_level=config.logging_level)
 
     def run(self):
         """

@@ -19,20 +19,46 @@ class Pipeline(ABC):
     """
 
     def __init__(self, study):
-        self.logger = logging.getLogger('data_engineering')                     # Logger
-        self.id = study.id                                                      # ID for the pipeline (same as study ID)
-        self.output_dir = os.path.join(study.get_dir(), 'output')               # Directory for Qiime2 results.
-        self.manifest_path = study.get_manifest_path()                          # Path for the manifest file.
-        self.demux_path = self.build_path(f'{study.id}_demux.qza')              # Path for demultiplexed Qiime2 artifact.
-        self.qza_table_path = self.build_path(f'{study.id}_feature-table.qza')  # Path for qza feature table.
-        self.qzv_table_path = self.build_path(f'{study.id}_feature-table.qzv')  # Path for qzv feature table.
-        self.tsv_table_path = self.build_path(f'{study.id}_feature-table.tsv')  # Path for tsv feature table.
-        self.biom_table_path = self.build_path(f'feature-table.biom')           # Path for biom feature table.
-        self.rep_seqs_path = self.build_path(f'{study.id}_rep_seqs.qza')        # Path for representative sequences.
-        self.stats_path = self.build_path(f'{study.id}_stats.qza')              # Path for denoising statistics.
-        self.qza_taxonomy_path = self.build_path(f'{study.id}_taxonomy.qza')    # Path for qza taxonomy results.
-        self.qzv_taxonomy_path = self.build_path(f'{study.id}_taxonomy.qzv')    # Path for qzv taxonomy results.
-        self.commands = []                                                      # List of commands to be executed.
+        self.logger = logging.getLogger('data_engineering')     
+        
+        # ID for the pipeline (same as study ID)
+        self.id = study.id
+
+        # Directory for Qiime2 results.
+        self.output_dir = os.path.join(study.get_dir(), 'output')
+
+        # Path for the manifest file.
+        self.manifest_path = study.get_manifest_path()
+
+        # Path for demultiplexed Qiime2 artifact.
+        self.demux_path = os.path.join(self.output_dir, f'{study.id}_demux.qza')
+
+        # Path for qza feature table.
+        self.qza_table_path = os.path.join(self.output_dir, f'{study.id}_feature-table.qza')
+
+        # Path for qzv feature table.
+        self.qzv_table_path = os.path.join(self.output_dir, f'{study.id}_feature-table.qzv')
+
+        # Path for tsv feature table.
+        self.tsv_table_path = os.path.join(self.output_dir, f'{study.id}_feature-table.tsv')
+
+        # Path for biom feature table.
+        self.biom_table_path = os.path.join(self.output_dir, f'feature-table.biom')
+
+        # Path for representative sequences.
+        self.rep_seqs_path = os.path.join(self.output_dir, f'{study.id}_rep_seqs.qza')
+
+        # Path for denoising statistics.
+        self.stats_path = os.path.join(self.output_dir, f'{study.id}_stats.qza')
+
+        # Path for qza taxonomy results.
+        self.qza_taxonomy_path = os.path.join(self.output_dir, f'{study.id}_taxonomy.qza')
+
+        # Path for qzv taxonomy results.
+        self.qzv_taxonomy_path = os.path.join(self.output_dir, f'{study.id}_taxonomy.qzv')
+
+        # List of commands to be executed.
+        self.commands = []                                                      
 
     def setup_common_commands(self):
         """
@@ -75,11 +101,6 @@ class Pipeline(ABC):
                                                  output_path=self.qzv_taxonomy_path,
                                                  msg=f'{self.id} | Converting Taxonomy results to qzv.'))
 
-    def build_path(self, f_name):
-        """
-        Return the file path for the given file name in the output directory.
-        """
-        return os.path.join(self.output_dir, f_name)
 
     def execute(self):
         """

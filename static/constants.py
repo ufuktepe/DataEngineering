@@ -13,8 +13,5 @@ PROCESSED_MARKER = 'processed.txt'
 # File name for indicating that the study is downloaded.
 COMPLETE_MARKER = 'complete.txt'
 
-# Logger name for the data engineering module.
-LOGGER_NAME = 'data_engineering'
-
 # Sequencing file extensions
 SEQUENCING_EXT = 'fastq'

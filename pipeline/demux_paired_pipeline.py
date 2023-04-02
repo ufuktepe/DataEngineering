@@ -1,8 +1,8 @@
 from .commands.import_cmd import ImportCmd
 from .commands.paired_denoise_cmd import PairedDenoiseCmd
 from .pipeline import Pipeline
-from static.input_format import InputFormat
-from static.semantic_type import SemanticType
+from ..static.input_format import InputFormat
+from ..static.semantic_type import SemanticType
 
 
 class DemuxPairedPipeline(Pipeline):
@@ -10,8 +10,8 @@ class DemuxPairedPipeline(Pipeline):
     Pipeline for a demultiplexed study that includes paired-end reads.
     """
 
-    def __init__(self, study):
-        super().__init__(study)
+    def __init__(self, study, logger_name):
+        super().__init__(study, logger_name)
         self.setup_unique_commands()
         self.setup_common_commands()
 

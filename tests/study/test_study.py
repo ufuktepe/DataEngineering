@@ -2,17 +2,13 @@ import os
 
 import pytest
 
-from config import config
-from study import Study, InvalidStudyError
+from ...config import config
+from ...study.study import Study, InvalidStudyError
 
 
 @pytest.fixture(scope="session", autouse=True)
 def configure():
     config.setup()
-
-@pytest.fixture
-def study():
-    return Study(os.getcwd())
 
 def test_invalid_parent_dir():
     study = Study("")

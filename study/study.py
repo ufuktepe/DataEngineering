@@ -4,9 +4,9 @@ import os
 import pandas as pd
 
 from .invalid_study_error import InvalidStudyError
-from static import constants as const
-from static.layout import Layout
-import utils
+from .. import utils
+from ..static import constants as const
+from ..static.layout import Layout
 
 # Define titles for the manifest file.
 MANIFEST_TITLES = {Layout.SINGLE: ['sample-id', 'absolute-filepath'],
@@ -55,23 +55,37 @@ class Study:
         except FileNotFoundError:
             raise InvalidStudyError(msg='Unable to generate manifest file!', study_id=self.id)
 
-    def get_dir(self):
-        """
-        Return the parent directory for the study.
-        """
-        return self.parent_dir
+    @property
+    def parent_dir(self):
+        return self._parent_dir
 
-    def get_manifest_path(self):
-        """
-        Return the path for the manifest file. If the study is not set up then None will be returned.
-        """
-        return self.manifest_path
+    @parent_dir.setter
+    def parent_dir(self, value):
+        self._parent_dir = value
 
-    def get_layout(self):
-        """
-        Return the sequencing layout. If the study is not set up then None will be returned.
-        """
-        return self.layout
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._id = value
+
+    @property
+    def manifest_path(self):
+        return self._manifest_path
+
+    @manifest_path.setter
+    def manifest_path(self, value):
+        self._manifest_path = value
+
+    @property
+    def layout(self):
+        return self._layout
+
+    @layout.setter
+    def layout(self, value):
+        self._layout = value
 
     def get_metadata(self):
         """

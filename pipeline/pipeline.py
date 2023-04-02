@@ -1,16 +1,16 @@
-from abc import ABC
 import logging
 import os
+from abc import ABC
 
-from config import config
 from .commands.biom_convert_cmd import BiomConvertCmd
 from .commands.export_cmd import ExportCmd
 from .commands.feature_classifier_cmd import FeatureClassifierCmd
 from .commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
 from .commands.metadata_tabulate_cmd import MetadataTabulateCmd
 from .pipeline_error import PipelineError
-from static.file_format import FileFormat
-import utils
+from .. import utils
+from ..config import config
+from ..static.file_format import FileFormat
 
 
 class Pipeline(ABC):
@@ -18,17 +18,17 @@ class Pipeline(ABC):
     Abstract class for a Qiime2 pipeline.
     """
 
-    def __init__(self, study):
-        self.logger = logging.getLogger('data_engineering')     
+    def __init__(self, study, logger_name):
+        self.logger = logging.getLogger(logger_name)
         
         # ID for the pipeline (same as study ID)
         self.id = study.id
 
         # Directory for Qiime2 results.
-        self.output_dir = os.path.join(study.get_dir(), 'output')
+        self.output_dir = os.path.join(study.parent_dir, 'output')
 
         # Path for the manifest file.
-        self.manifest_path = study.get_manifest_path()
+        self.manifest_path = study.manifest_path
 
         # Path for demultiplexed Qiime2 artifact.
         self.demux_path = os.path.join(self.output_dir, f'{study.id}_demux.qza')
@@ -100,7 +100,6 @@ class Pipeline(ABC):
         self.commands.append(MetadataTabulateCmd(input_path=self.qza_taxonomy_path,
                                                  output_path=self.qzv_taxonomy_path,
                                                  msg=f'{self.id} | Converting Taxonomy results to qzv.'))
-
 
     def execute(self):
         """

@@ -2,8 +2,8 @@ import os
 import sys
 import time
 
-import utils
-from config import config
+from . import utils
+from .config import config
 
 
 def download_data():

@@ -4,14 +4,13 @@ import os
 import sys
 import time
 
-from config import config
-from pipeline.pipeline_factory import PipelineFactory
-from pipeline.pipeline_error import PipelineError
-from static import constants as const
-from study import InvalidStudyError
-from study import Study
-import utils
-
+from . import utils
+from .config import config
+from .pipeline.pipeline_error import PipelineError
+from .pipeline.pipeline_factory import PipelineFactory
+from .static import constants as const
+from .study.study import InvalidStudyError
+from .study.study import Study
 
 LOGGER_NAME = 'data_engineering'
 
@@ -75,7 +74,7 @@ class DataEngineering:
 
         self.logger.debug(f'{study.id} | Generating a Qiime2 pipeline.')
         try:
-            pipeline = PipelineFactory.generate_pipeline(study)
+            pipeline = PipelineFactory.generate_pipeline(study, LOGGER_NAME)
         except InvalidStudyError as e:
             self.logger.critical(e)
             utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))

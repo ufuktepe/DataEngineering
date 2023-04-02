@@ -1,7 +1,7 @@
 from .demux_paired_pipeline import DemuxPairedPipeline
 from .demux_single_pipeline import DemuxSinglePipeline
-from static.layout import Layout
-from study.study import InvalidStudyError
+from ..static.layout import Layout
+from ..study.study import InvalidStudyError
 
 PIPELINES = {Layout.SINGLE: DemuxSinglePipeline,
              Layout.PAIRED: DemuxPairedPipeline}
@@ -13,12 +13,14 @@ class PipelineFactory:
     """
 
     @classmethod
-    def generate_pipeline(cls, study):
+    def generate_pipeline(cls, study, logger_name):
         """
         Return a pipeline based on the given study. Raise an InvalidStudyError if the type of the study cannot be
         identified.
         """
         try:
-            return PIPELINES[study.get_layout()](study)
+            x = PIPELINES[study.layout]
+            y = 5
+            return PIPELINES[study.layout](study, logger_name)
         except KeyError:
-            raise InvalidStudyError('Unsupported study type!')
+            raise InvalidStudyError(msg='Unsupported study type!', study_id='N/A')

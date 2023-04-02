@@ -8,9 +8,9 @@ from .commands.feature_classifier_cmd import FeatureClassifierCmd
 from .commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
 from .commands.metadata_tabulate_cmd import MetadataTabulateCmd
 from .pipeline_error import PipelineError
-from .. import utils
-from ..config import config
-from ..static.file_format import FileFormat
+import utils
+from config import config
+from static.file_format import FileFormat
 
 
 class Pipeline(ABC):

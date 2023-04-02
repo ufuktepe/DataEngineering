@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
+import json
 import os
 import sys
 import time
 
-from . import utils
-from .config import config
-from .pipeline.pipeline_error import PipelineError
-from .pipeline.pipeline_factory import PipelineFactory
-from .static import constants as const
-from .study.study import InvalidStudyError
-from .study.study import Study
+import requests
+
+import utils
+from config import config
+from pipeline.pipeline_error import PipelineError
+from pipeline.pipeline_factory import PipelineFactory
+from static import constants as const
+from study.study import InvalidStudyError
+from study.study import Study
 
 LOGGER_NAME = 'data_engineering'
 
@@ -88,8 +91,30 @@ class DataEngineering:
             utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
             return
 
+        # Post the results
+        if self.post_study(study) == 201:
+            self.logger.info(f'{study.id} | Sent results to Post Processing API successfully.')
+        else:
+            self.logger.warning(f'{study.id} | Error sendig the results to Post Processing API.')
+
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
         utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
+
+    def post_study(self, study):
+        """
+        Post the study to the Post Processing API.
+        """
+        studies = [{'id': study.id,
+                    'library_layout': study.layout,
+                    'feature_table_path': os.path.join(study.parent_dir, 'output', f'{study.id}_feature-table.qza'),
+                    'taxonomy_results_path': os.path.join(study.parent_dir, 'output', f'{study.id}_taxonomy.qza')}
+                   ]
+
+        response = requests.post(f'http://{config.post_processing_api_ip}:{config.post_processing_api_port}/',
+                                 data=json.dumps(studies))
+
+        return response.status_code
+
 
 
 def main():

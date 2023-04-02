@@ -1,7 +1,7 @@
 from .demux_paired_pipeline import DemuxPairedPipeline
 from .demux_single_pipeline import DemuxSinglePipeline
-from ..static.layout import Layout
-from ..study.study import InvalidStudyError
+from static.layout import Layout
+from study.study import InvalidStudyError
 
 PIPELINES = {Layout.SINGLE: DemuxSinglePipeline,
              Layout.PAIRED: DemuxPairedPipeline}

@@ -4,9 +4,9 @@ import os
 import pandas as pd
 
 from .invalid_study_error import InvalidStudyError
-from .. import utils
-from ..static import constants as const
-from ..static.layout import Layout
+import utils
+from static import constants as const
+from static.layout import Layout
 
 # Define titles for the manifest file.
 MANIFEST_TITLES = {Layout.SINGLE: ['sample-id', 'absolute-filepath'],

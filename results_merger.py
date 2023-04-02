@@ -28,8 +28,8 @@ def run(studies, output_dir, env):
 
     # Build paths for feature tables and taxonomy results.
     for study in studies:
-        feature_table_paths += study.feature_table_path
-        taxonomy_results_paths += study.taxonomy_results_path
+        feature_table_paths += study.feature_table_path + ' '
+        taxonomy_results_paths += study.taxonomy_results_path + ' '
 
     # Generate the merged results.
     merge_feature_tables(feature_table_paths, qza_table_path, env)

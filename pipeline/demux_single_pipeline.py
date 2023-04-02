@@ -1,8 +1,8 @@
 from .commands.import_cmd import ImportCmd
 from .commands.single_denoise_cmd import SingleDenoiseCmd
 from .pipeline import Pipeline
-from ..static.input_format import InputFormat
-from ..static.semantic_type import SemanticType
+from static.input_format import InputFormat
+from static.semantic_type import SemanticType
 
 
 class DemuxSinglePipeline(Pipeline):

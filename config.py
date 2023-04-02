@@ -7,8 +7,10 @@ CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 LOGGER_PATH = 'logger_path'
 LOGGING_LEVEL = 'logging_level'
+POST_PROCESSOR_API_IP = 'post_processor_api_ip'
+POST_PROCESSOR_API_PORT = 'post_processor_api_port'
 LOGGING_LEVELS = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20, 'DEBUG': 10, 'NOTSET': 0}
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH, LOGGING_LEVEL}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH, LOGGING_LEVEL, POST_PROCESSOR_API_IP, POST_PROCESSOR_API_PORT}
 
 
 class Config:
@@ -63,6 +65,14 @@ class Config:
             return None
         level = self.config[LOGGING_LEVEL].upper()
         return LOGGING_LEVELS.get(level, None)
+
+    @property
+    def post_processing_api_ip(self):
+        return self.config.get(POST_PROCESSOR_API_IP, None)
+
+    @property
+    def post_processing_api_port(self):
+        return self.config.get(POST_PROCESSOR_API_PORT, None)
 
 
 # Singleton

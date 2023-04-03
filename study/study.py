@@ -46,8 +46,8 @@ class Study:
         # Identify the sequencing layout (SINGLE or PAIRED).
         try:
             self.layout = self.extract_layout()
-        except ValueError as e:
-            raise InvalidStudyError(msg=str(e), study_id=self.id)
+        except ValueError:
+            raise InvalidStudyError(msg='Unable to identify the sequencing layout type!', study_id=self.id)
 
         # Generate the manifest file.
         try:
@@ -104,24 +104,25 @@ class Study:
         identified.
         """
         # Create a metadata dictionary
+        print('---1000---')
         metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
-
+        print('---2000---')
         # Verify that the metadata includes a layout column
         if const.LAYOUT_TITLE not in metadata:
-            raise ValueError(f'Layout Title {const.LAYOUT_TITLE} not in metadata.')
-
+            raise ValueError
+        print('---3000---')
         # Verify that the metadata includes the study id
         if self.id not in metadata[const.LAYOUT_TITLE]:
-            raise ValueError(f'Study ID {self.id } not in metadata.')
-
+            raise ValueError
+        print('---4000---')
         layout = metadata[const.LAYOUT_TITLE][self.id].lower()
-
+        print('---5000---')
         if layout == Layout.SINGLE:
             return Layout.SINGLE
         elif layout == Layout.PAIRED:
             return Layout.PAIRED
 
-        raise ValueError('Unable to identify the sequencing layout type')
+        raise ValueError
 
     def map_samples_to_files(self):
         """

@@ -104,7 +104,7 @@ class Study:
         identified.
         """
         # Create a metadata dictionary
-        print('---1000---')
+        print(f'self.metadata_path: {self.metadata_path}')
         metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
         print('---2000---')
         # Verify that the metadata includes a layout column

@@ -25,8 +25,7 @@ def run_command(cmd, env):
     """
     Run the shell command in the given conda environment.
     """
-    # cmd = f'conda run --no-capture-output -n {env} ' + cmd
-    cmd = f'conda run -n {env} ' + cmd
+    cmd = f'conda run --no-capture-output -n {env} ' + cmd
     process = subprocess.run(cmd, shell=True)
 
     return process.returncode

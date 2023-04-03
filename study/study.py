@@ -111,6 +111,7 @@ class Study:
         if const.LAYOUT_TITLE not in metadata:
             raise ValueError
         print("-----3-----")
+        print(f"Study ID: {self.id}")
         # Verify that the metadata includes the study id
         if self.id not in metadata[const.LAYOUT_TITLE]:
             raise ValueError

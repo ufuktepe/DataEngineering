@@ -112,6 +112,7 @@ class DataEngineering:
                     'taxonomy_results_path': os.path.join(study.parent_dir, 'output', f'{study.id}_taxonomy.qza')}
                    ]
 
+        # Send a POST request to the Post Processor API.
         response = requests.post(f'http://{config.post_processing_api_ip}:{config.post_processing_api_port}/',
                                  data=json.dumps(studies))
 

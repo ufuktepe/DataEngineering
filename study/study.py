@@ -93,7 +93,7 @@ class Study:
         """
         for root, sub_dirs, file_names in os.walk(self.parent_dir):
             for file_name in file_names:
-                if file_name.endswith(const.METADATA_EXT):
+                if file_name.endswith(const.METADATA_EXT) and not file_name.startswith('.'):
                     return os.path.join(root, file_name)
 
         raise FileNotFoundError
@@ -104,19 +104,18 @@ class Study:
         identified.
         """
         # Create a metadata dictionary
-        print(f'self.metadata_path: {self.metadata_path}')
         metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
-        print('---2000---')
+
         # Verify that the metadata includes a layout column
         if const.LAYOUT_TITLE not in metadata:
             raise ValueError
-        print('---3000---')
+
         # Verify that the metadata includes the study id
         if self.id not in metadata[const.LAYOUT_TITLE]:
             raise ValueError
-        print('---4000---')
+
         layout = metadata[const.LAYOUT_TITLE][self.id].lower()
-        print('---5000---')
+
         if layout == Layout.SINGLE:
             return Layout.SINGLE
         elif layout == Layout.PAIRED:

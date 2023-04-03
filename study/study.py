@@ -36,6 +36,8 @@ class Study:
             raise InvalidStudyError(msg=f'{self.parent_dir} is an invalid directory!', study_id=self.id)
 
         self.id = os.path.basename(self.parent_dir)
+        print(f'self.parent_dir: {self.parent_dir}')
+        print(f'os.path.basename(self.parent_dir): {os.path.basename(self.parent_dir)}')
 
         # Identify the file path for metadata.
         try:

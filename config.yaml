@@ -2,10 +2,10 @@
 - classifier_file_name: gg-13-8-99-515-806-nb-classifier.qza
 
   # Qiime2 environment name.
-  env: qiime2-2022.2
+  env: qiime2-2022.11
 
   # Logging level for the logger (CRITICAL, ERROR, WARNING, INFO, DEBUG, or NOTSET)
-  logging_level: INFO
+  logging_level: DEBUG
 
   # Post Processor API IPv4 address
   post_processor_api_ip: 35.87.242.78

@@ -91,14 +91,16 @@ class DataEngineering:
             utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
             return
 
+        utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
+
         # Post the results
         if self.post_study(study) == 201:
             self.logger.info(f'{study.id} | Sent results to Post Processing API successfully.')
         else:
-            self.logger.warning(f'{study.id} | Error sendig the results to Post Processing API.')
+            self.logger.warning(f'{study.id} | Error sending the results to Post Processing API.')
 
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
-        utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
+
 
     def post_study(self, study):
         """
@@ -114,7 +116,6 @@ class DataEngineering:
                                  data=json.dumps(studies))
 
         return response.status_code
-
 
 
 def main():

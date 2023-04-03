@@ -35,9 +35,7 @@ class Study:
         if not os.path.isdir(self.parent_dir):
             raise InvalidStudyError(msg=f'{self.parent_dir} is an invalid directory!', study_id=self.id)
 
-        self.id = os.path.basename(self.parent_dir)
-        print(f'self.parent_dir: {self.parent_dir}')
-        print(f'os.path.basename(self.parent_dir): {os.path.basename(self.parent_dir)}')
+        self.id = os.path.normpath(os.path.basename(self.parent_dir))
 
         # Identify the file path for metadata.
         try:
@@ -106,25 +104,24 @@ class Study:
         identified.
         """
         # Create a metadata dictionary
-        print("-----1-----")
+
         metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
-        print("-----2-----")
+
         # Verify that the metadata includes a layout column
         if const.LAYOUT_TITLE not in metadata:
             raise ValueError
-        print("-----3-----")
-        print(f"Study ID: {self.id}")
+
         # Verify that the metadata includes the study id
         if self.id not in metadata[const.LAYOUT_TITLE]:
             raise ValueError
-        print("-----4-----")
+
         layout = metadata[const.LAYOUT_TITLE][self.id].lower()
-        print("-----5-----")
+
         if layout == Layout.SINGLE:
             return Layout.SINGLE
         elif layout == Layout.PAIRED:
             return Layout.PAIRED
-        print("-----6-----")
+
         raise ValueError
 
     def map_samples_to_files(self):

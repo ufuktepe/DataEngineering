@@ -21,6 +21,7 @@ def get_file_paths(directory, ext):
 
     return files
 
+
 def run_command(cmd, env):
     """
     Run the shell command in the given conda environment.
@@ -30,6 +31,7 @@ def run_command(cmd, env):
 
     return process.returncode
 
+
 def create_dir(directory):
     """
     Create a new directory. Overwrite if it already exists.
@@ -37,6 +39,7 @@ def create_dir(directory):
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.makedirs(directory)
+
 
 def copy_file(src, dst):
     """
@@ -46,6 +49,7 @@ def copy_file(src, dst):
         shutil.copy(src, dst)
     except:
         raise OSError
+
 
 def get_runtime(start_time):
     """
@@ -59,6 +63,7 @@ def get_runtime(start_time):
     secs = delta - mins * 60
 
     return '%dh:%dm:%ds' % (hours, mins, secs)
+
 
 def setup_logger(logger_name, logging_level):
     """
@@ -83,6 +88,7 @@ def setup_logger(logger_name, logging_level):
     logger.setLevel(logging_level)
 
     return logger
+
 
 def create_empty_txt(file_path):
     """

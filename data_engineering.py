@@ -41,14 +41,13 @@ class DataEngineering:
         Constantly crawl the given directory to find downloaded studies. Process all studies that are ready to be
         processed.
         """
-        # # Check arguments.
-        # if len(sys.argv) != 2:
-        #     print('Please provide an input directory.')
-        #     return
-        #
-        # # Get the directory.
-        # directory = sys.argv[1]
-        directory = r'/Volumes/Burak_HDD/qiime2/subset_test/ERR6004692'
+        # Check arguments.
+        if len(sys.argv) != 2:
+            print('Please provide an input directory.')
+            return
+
+        # Get the directory.
+        directory = sys.argv[1]
 
         # Validate the directory.
         if not os.path.isdir(directory):

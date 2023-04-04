@@ -49,7 +49,7 @@ def download_data():
 
         # Download the study files
         print(f'Downloading {study_dir}...')
-        return_code = utils.run_command(cmd=f'fasterq-dump {study_id} -O {study_dir} -t {scratch_dir}', env=config.env)
+        return_code = utils.run_conda_command(cmd=f'fasterq-dump {study_id} -O {study_dir} -t {scratch_dir}', env=config.env)
         print(return_code)
 
         if return_code != 0:

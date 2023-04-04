@@ -43,7 +43,7 @@ def merge_feature_tables(feature_table_paths, qza_table_path, env):
     Merge qza feature tables into a single qza feature table.
     """
     command = FeatureTableMergeCmd(input_path=feature_table_paths, output_path=qza_table_path)
-    execute(command, env)
+    execute_conda_cmd(command, env)
 
 
 def convert_feature_table(qza_table_path, qzv_table_path, env):
@@ -51,7 +51,10 @@ def convert_feature_table(qza_table_path, qzv_table_path, env):
     Convert the given feature table from qza to qzv.
     """
     command = FeatureTableSummarizeCmd(input_path=qza_table_path, output_path=qzv_table_path)
-    execute(command, env)
+    execute_conda_cmd(command, env)
+    key = qzv_table_path.split('qiime2storage')[1][1:]
+    permission_cmd = f'aws s3api put-object-acl --bucket qiime2storage --key {key}  --acl public-read'
+    execute_shell_cmd(permission_cmd)
 
 
 def merge_taxonomy_results(taxonomy_results_paths, qza_taxonomy_path, env):
@@ -59,7 +62,7 @@ def merge_taxonomy_results(taxonomy_results_paths, qza_taxonomy_path, env):
     Merge qza taxonomy results into a single qza.
     """
     command = FeatureTableMergeTaxaCmd(input_path=taxonomy_results_paths, output_path=qza_taxonomy_path)
-    execute(command, env)
+    execute_conda_cmd(command, env)
 
 
 def generate_taxonomy_bar_chart(qza_table_path, qza_taxonomy_path, taxonomy_bar_plot_path, env):
@@ -69,13 +72,25 @@ def generate_taxonomy_bar_chart(qza_table_path, qza_taxonomy_path, taxonomy_bar_
     command = TaxaBarPlotCmd(qza_table_path=qza_table_path,
                              qza_taxonomy_path=qza_taxonomy_path,
                              output_path=taxonomy_bar_plot_path)
-    execute(command, env)
+    execute_conda_cmd(command, env)
+    key = taxonomy_bar_plot_path.split('qiime2storage')[1][1:]
+    permission_cmd = f'aws s3api put-object-acl --bucket qiime2storage --key {key}  --acl public-read'
+    execute_shell_cmd(permission_cmd)
 
 
-def execute(cmd, env):
+def execute_conda_cmd(cmd, env):
     """
     Execute the given command in the given environment.
     """
-    return_code = utils.run_command(cmd=str(cmd), env=env)
+    return_code = utils.run_conda_command(cmd=str(cmd), env=env)
     if return_code != 0:
         raise ValueError(f'Qiime2 exited with return code {return_code}.')
+
+
+def execute_shell_cmd(cmd):
+    """
+    Execute the given command.
+    """
+    return_code = utils.run_command(cmd=cmd)
+    if return_code != 0:
+        raise ValueError(f'Shell exited with return code {return_code}.')

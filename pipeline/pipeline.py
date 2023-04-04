@@ -109,7 +109,7 @@ class Pipeline(ABC):
 
         for command in self.commands:
             self.logger.debug(command.get_msg())
-            return_code = utils.run_command(cmd=str(command), env=config.env)
+            return_code = utils.run_conda_command(cmd=str(command), env=config.env)
             if return_code != 0:
                 raise PipelineError(msg='Pipeline error.', study_id=self.id)
 

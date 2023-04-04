@@ -22,11 +22,20 @@ def get_file_paths(directory, ext):
     return files
 
 
-def run_command(cmd, env):
+def run_conda_command(cmd, env):
     """
     Run the shell command in the given conda environment.
     """
     cmd = f'conda run --no-capture-output -n {env} ' + cmd
+    process = subprocess.run(cmd, shell=True)
+
+    return process.returncode
+
+
+def run_command(cmd):
+    """
+    Run the shell command.
+    """
     process = subprocess.run(cmd, shell=True)
 
     return process.returncode

@@ -5,6 +5,7 @@ import os
 import sys
 import time
 
+import psycopg2
 import requests
 
 import utils
@@ -72,7 +73,7 @@ class DataEngineering:
             study.setup()
         except InvalidStudyError as e:
             self.logger.critical(e)
-            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
+            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
             return
 
         self.logger.debug(f'{study.id} | Generating a Qiime2 pipeline.')
@@ -80,7 +81,7 @@ class DataEngineering:
             pipeline = PipelineFactory.generate_pipeline(study, LOGGER_NAME)
         except InvalidStudyError as e:
             self.logger.critical(e)
-            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
+            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
             return
 
         self.logger.debug(f'{study.id} | Executing the pipeline.')
@@ -88,10 +89,20 @@ class DataEngineering:
             pipeline.execute()
         except PipelineError as e:
             self.logger.error(f'{e.study_id} | {e.msg}')
-            utils.create_empty_txt(file_path=os.path.join(directory, const.ERROR_MARKER))
+            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
             return
 
-        utils.create_empty_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
+        self.logger.debug(f'{study.id} | Creating the results csv file.')
+        try:
+            utils.create_results_csv(feature_table_path=pipeline.get_feature_table_path(),
+                                     taxonomy_results_path=pipeline.get_taxonomy_results_path(),
+                                     output_dir=pipeline.get_output_dir())
+        except ValueError as e:
+            self.logger.error(f'{study.id} | {str(e)}')
+            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
+            return
+
+        utils.create_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
 
         # Post the results
         if self.post_study(study) == 201:
@@ -102,21 +113,31 @@ class DataEngineering:
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
 
 
-    def post_study(self, study):
+    def post_results(self, results_csv):
         """
-        Post the study to the Post Processing API.
+        Send the results to the database.
         """
-        studies = [{'id': study.id,
-                    'library_layout': study.layout,
-                    'feature_table_path': os.path.join(study.parent_dir, 'output', f'{study.id}_feature-table.qza'),
-                    'taxonomy_results_path': os.path.join(study.parent_dir, 'output', f'{study.id}_taxonomy.qza')}
-                   ]
+        conn = psycopg2.connect("host=localhost dbname=postgres user=postgres")
+        cur = conn.cursor()
+        with open(results_csv, 'r') as f:
+            next(f)  # Skip the header row.
+            cur.copy_from(f, 'users', sep=',')
 
-        # Send a POST request to the Post Processor API.
-        response = requests.post(f'http://{config.post_processing_api_ip}:{config.post_processing_api_port}/',
-                                 data=json.dumps(studies))
+        conn.commit()
 
-        return response.status_code
+
+
+        # studies = [{'id': study.id,
+        #             'library_layout': study.layout,
+        #             'feature_table_path': os.path.join(study.parent_dir, 'output', f'{study.id}_feature-table.qza'),
+        #             'taxonomy_results_path': os.path.join(study.parent_dir, 'output', f'{study.id}_taxonomy.qza')}
+        #            ]
+        #
+        # # Send a POST request to the Post Processor API.
+        # response = requests.post(f'http://{config.post_processing_api_ip}:{config.post_processing_api_port}/',
+        #                          data=json.dumps(studies))
+        #
+        # return response.status_code
 
 
 def main():

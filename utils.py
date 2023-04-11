@@ -5,6 +5,8 @@ import subprocess
 import sys
 import time
 
+import pandas as pd
+
 from pythonjsonlogger import jsonlogger
 
 
@@ -26,7 +28,7 @@ def run_conda_command(cmd, env):
     """
     Run the shell command in the given conda environment.
     """
-    cmd = f'conda run --no-capture-output -n {env} ' + cmd
+    cmd = f'/home/qiime2/miniconda/bin/conda run --no-capture-output -n {env} ' + cmd
     process = subprocess.run(cmd, shell=True)
 
     return process.returncode
@@ -99,9 +101,46 @@ def setup_logger(logger_name, logging_level):
     return logger
 
 
-def create_empty_txt(file_path):
+def create_txt(file_path, contents=''):
     """
-    Create an empty text file.
+    Create a text file.
     """
-    with open(file_path, 'w') as _:
-        pass
+    with open(file_path, 'w') as f:
+        if contents:
+            f.write(contents)
+
+
+def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
+    """
+    Create a csv file that includes Qiime2 results.
+    """
+    # Load the tsv files into dictionaries
+    feature_table = pd.read_csv(feature_table_path, index_col=0, skiprows=1, sep='\t').to_dict()
+    features_to_taxa = pd.read_csv(taxonomy_results_path, index_col=0, sep='\t').to_dict()
+
+    # Validate the taxonomy results file
+    if 'Taxon' not in features_to_taxa:
+        raise ValueError(f'Taxon column is missing in {taxonomy_results_path}.')
+
+    if 'Confidence' not in features_to_taxa:
+        raise ValueError(f'Confidence column is missing in {taxonomy_results_path}.')
+
+    csv_contents = []
+
+    # Populate csv contents list
+    for study_id, features_to_counts in feature_table.items():
+        for feature, count in features_to_counts.items():
+            try:
+                taxon = features_to_taxa['Taxon'][feature]
+                confidence = features_to_taxa['Confidence'][feature]
+            except KeyError:
+                raise ValueError(f'Feature ID {feature} is missing in {taxonomy_results_path}.')
+
+            csv_contents.append(f'{study_id},{taxon},{confidence},{count}\n')
+
+    # Create the csv file
+    with open(os.path.join(output_dir, 'results.csv'), "w") as results:
+        results.write('Run_ID,Taxon,Confidence,Count\n')
+        results.writelines(csv_contents)
+
+

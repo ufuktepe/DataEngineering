@@ -58,7 +58,16 @@ class Pipeline(ABC):
         self.qzv_taxonomy_path = os.path.join(self.output_dir, f'{study.id}_taxonomy.qzv')
 
         # List of commands to be executed.
-        self.commands = []                                                      
+        self.commands = []
+
+    def get_feature_table_path(self):
+        return self.tsv_table_path
+
+    def get_taxonomy_results_path(self):
+        return os.path.join(self.output_dir, 'taxonomy.tsv')
+
+    def get_output_dir(self):
+        return self.output_dir
 
     def setup_common_commands(self):
         """

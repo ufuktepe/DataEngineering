@@ -52,7 +52,12 @@ def convert_feature_table(qza_table_path, qzv_table_path, conda_path, env):
     """
     command = FeatureTableSummarizeCmd(input_path=qza_table_path, output_path=qzv_table_path)
     execute_conda_cmd(command, conda_path, env)
-    key = qzv_table_path.split('qiime2storage')[1][1:]
+
+    # Grant permission
+    try:
+        key = qzv_table_path.split('qiime2storage')[1][1:]
+    except IndexError:
+        raise ValueError
     permission_cmd = f'aws s3api put-object-acl --bucket qiime2storage --key {key}  --acl public-read'
     execute_shell_cmd(permission_cmd)
 
@@ -73,7 +78,12 @@ def generate_taxonomy_bar_chart(qza_table_path, qza_taxonomy_path, taxonomy_bar_
                              qza_taxonomy_path=qza_taxonomy_path,
                              output_path=taxonomy_bar_plot_path)
     execute_conda_cmd(command, conda_path, env)
-    key = taxonomy_bar_plot_path.split('qiime2storage')[1][1:]
+
+    # Grant permission
+    try:
+        key = taxonomy_bar_plot_path.split('qiime2storage')[1][1:]
+    except IndexError:
+        raise ValueError
     permission_cmd = f'aws s3api put-object-acl --bucket qiime2storage --key {key}  --acl public-read'
     execute_shell_cmd(permission_cmd)
 

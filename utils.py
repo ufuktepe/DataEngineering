@@ -6,6 +6,7 @@ import sys
 import time
 
 import pandas as pd
+from zipfile import ZipFile
 
 from pythonjsonlogger import jsonlogger
 
@@ -144,3 +145,9 @@ def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
         results.writelines(csv_contents)
 
 
+def unzip(zip_file_path, output_dir):
+    """
+    Unzip the given file in the output directory
+    """
+    with ZipFile(zip_file_path, 'r') as z:
+        z.extractall(path=output_dir)

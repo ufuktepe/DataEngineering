@@ -4,13 +4,19 @@
   # Qiime2 environment name.
   env: qiime2-2022.2
 
+  # Conda path
+  conda_path: /home/qiime2/miniconda/bin/conda
+
   # Logging level for the logger (CRITICAL, ERROR, WARNING, INFO, DEBUG, or NOTSET)
   logging_level: DEBUG
 
   # Post Processor API IPv4 address
-  post_processor_api_ip: 35.82.29.117
+  post_processor_api_ip: 127.0.0.1
 
   # Post Processor API port number
   post_processor_api_port: 8000
+
+  # Database table that includes Qiime2 results
+  qiime2_results_table: qiime2_results
 
 

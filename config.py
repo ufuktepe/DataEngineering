@@ -5,12 +5,14 @@ import yaml
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
+CONDA_PATH = 'conda_path'
 LOGGER_PATH = 'logger_path'
 LOGGING_LEVEL = 'logging_level'
 POST_PROCESSOR_API_IP = 'post_processor_api_ip'
 POST_PROCESSOR_API_PORT = 'post_processor_api_port'
 LOGGING_LEVELS = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20, 'DEBUG': 10, 'NOTSET': 0}
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, LOGGER_PATH, LOGGING_LEVEL, POST_PROCESSOR_API_IP, POST_PROCESSOR_API_PORT}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, CONDA_PATH, LOGGER_PATH, LOGGING_LEVEL, POST_PROCESSOR_API_IP,
+               POST_PROCESSOR_API_PORT}
 
 
 class Config:
@@ -54,6 +56,10 @@ class Config:
     @property
     def env(self):
         return self.config.get(ENV, None)
+
+    @property
+    def conda_path(self):
+        return self.config.get(CONDA_PATH, None)
 
     @property
     def logger_path(self):

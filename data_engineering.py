@@ -57,6 +57,7 @@ class DataEngineering:
 
         print(f'Monitoring {directory}')
         while True:
+            time.sleep(3)
             for root, sub_dirs, file_names in os.walk(directory):
                 if Study.is_ready_for_processing(file_names):
                     self.process_study(root)

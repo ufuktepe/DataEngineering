@@ -24,11 +24,11 @@ def get_file_paths(directory, ext):
     return files
 
 
-def run_conda_command(cmd, env):
+def run_conda_command(cmd, conda_path, env):
     """
     Run the shell command in the given conda environment.
     """
-    cmd = f'/home/qiime2/miniconda/bin/conda run --no-capture-output -n {env} ' + cmd
+    cmd = f'{conda_path} run --no-capture-output -n {env} ' + cmd
     process = subprocess.run(cmd, shell=True)
 
     return process.returncode

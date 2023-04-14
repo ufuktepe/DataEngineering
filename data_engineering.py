@@ -10,11 +10,14 @@ import requests
 
 import utils
 from config import config
+from database_manager.db_error import DBError
+from database_manager.db_manager import db_manager
 from pipeline.pipeline_error import PipelineError
 from pipeline.pipeline_factory import PipelineFactory
 from static import constants as const
 from study.study import InvalidStudyError
 from study.study import Study
+from static.status import Status
 
 LOGGER_NAME = 'data_engineering'
 
@@ -28,7 +31,7 @@ class DataEngineering:
 
     def setup(self):
         """
-        Set up the configuration and logger.
+        Set up the configuration, logger, and db manager.
         """
         try:
             config.setup()
@@ -36,6 +39,11 @@ class DataEngineering:
             raise ValueError(e)
 
         self.logger = utils.setup_logger(logger_name=LOGGER_NAME, logging_level=config.logging_level)
+
+        try:
+            db_manager.setup(config)
+        except DBError as e:
+            raise ValueError(e)
 
     def run(self):
         """
@@ -49,6 +57,7 @@ class DataEngineering:
 
         # Get the directory.
         directory = sys.argv[1]
+        # directory = '/Volumes/Burak_HDD/qiime2/small_subset_test'
 
         # Validate the directory.
         if not os.path.isdir(directory):
@@ -60,85 +69,78 @@ class DataEngineering:
             time.sleep(3)
             for root, sub_dirs, file_names in os.walk(directory):
                 if Study.is_ready_for_processing(file_names):
+                    # Claim the study
+                    try:
+                        utils.create_txt(file_path=os.path.join(root, const.CLAIMED_MARKER))
+                    except ValueError:
+                        continue
+
+                    # Process the study
                     self.process_study(root)
 
     def process_study(self, directory):
         """
         Create a study from the user provided directory. Then create a Qiime2 pipeline and execute it.
         """
+        # Check if the claimed marker belongs to this process
+        if not utils.is_file_owned_by_me(file_path=os.path.join(directory, const.CLAIMED_MARKER)):
+            return
+
         start_time = time.time()
 
-        self.logger.debug(f'Processing {os.path.basename(directory)}')
+        study_id = os.path.basename(directory)
+
+        db_manager.update_status(run_id=study_id, status=Status.PROCESSING)
+
+        self.logger.debug(f'Processing {study_id}')
         study = Study(directory)
         try:
             study.setup()
         except InvalidStudyError as e:
-            self.logger.critical(e)
-            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
             return
 
         self.logger.debug(f'{study.id} | Generating a Qiime2 pipeline.')
         try:
             pipeline = PipelineFactory.generate_pipeline(study, LOGGER_NAME)
         except InvalidStudyError as e:
-            self.logger.critical(e)
-            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
             return
 
         self.logger.debug(f'{study.id} | Executing the pipeline.')
         try:
             pipeline.execute()
         except PipelineError as e:
-            self.logger.error(f'{e.study_id} | {e.msg}')
-            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
             return
 
         self.logger.debug(f'{study.id} | Creating the results csv file.')
         try:
-            utils.create_results_csv(feature_table_path=pipeline.get_feature_table_path(),
-                                     taxonomy_results_path=pipeline.get_taxonomy_results_path(),
-                                     output_dir=pipeline.get_output_dir())
+            results_csv_path = utils.create_results_csv(feature_table_path=pipeline.get_feature_table_path(),
+                                                        taxonomy_results_path=pipeline.get_taxonomy_results_path(),
+                                                        output_dir=pipeline.get_output_dir())
         except ValueError as e:
-            self.logger.error(f'{study.id} | {str(e)}')
-            utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=e)
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
             return
 
-        utils.create_txt(file_path=os.path.join(directory, const.PROCESSED_MARKER))
-
         # Post the results
-        if self.post_study(study) == 201:
-            self.logger.info(f'{study.id} | Sent results to Post Processing API successfully.')
-        else:
-            self.logger.warning(f'{study.id} | Error sending the results to Post Processing API.')
+        try:
+            db_manager.post_results(csv_path=results_csv_path)
+            self.logger.info(f'{study.id} | Sent results to the database successfully.')
+        except DBError as e:
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
+            return
 
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
+        db_manager.update_status(run_id=study_id, status=Status.SUCCESS)
 
-
-    def post_results(self, results_csv):
+    def error_out(self, study_id, error_msg, directory):
         """
-        Send the results to the database.
+        Log the error message, create an error text file, and update the status table.
         """
-        conn = psycopg2.connect("host=localhost dbname=postgres user=postgres")
-        cur = conn.cursor()
-        with open(results_csv, 'r') as f:
-            next(f)  # Skip the header row.
-            cur.copy_from(f, 'users', sep=',')
-
-        conn.commit()
-
-
-
-        # studies = [{'id': study.id,
-        #             'library_layout': study.layout,
-        #             'feature_table_path': os.path.join(study.parent_dir, 'output', f'{study.id}_feature-table.qza'),
-        #             'taxonomy_results_path': os.path.join(study.parent_dir, 'output', f'{study.id}_taxonomy.qza')}
-        #            ]
-        #
-        # # Send a POST request to the Post Processor API.
-        # response = requests.post(f'http://{config.post_processing_api_ip}:{config.post_processing_api_port}/',
-        #                          data=json.dumps(studies))
-        #
-        # return response.status_code
+        self.logger.error(f'{study_id} | {error_msg}')
+        utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=error_msg)
+        db_manager.update_status(run_id=study_id, status=Status.ERROR)
 
 
 def main():

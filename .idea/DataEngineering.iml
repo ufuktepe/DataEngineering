@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/tests/study" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/downloader" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests/pipeline" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/database_manager" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="inheritedJdk" />

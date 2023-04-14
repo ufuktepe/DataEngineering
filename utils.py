@@ -4,10 +4,10 @@ import shutil
 import subprocess
 import sys
 import time
-
-import pandas as pd
+from pwd import getpwuid
 from zipfile import ZipFile
 
+import pandas as pd
 from pythonjsonlogger import jsonlogger
 
 
@@ -104,11 +104,17 @@ def setup_logger(logger_name, logging_level):
 
 def create_txt(file_path, contents=''):
     """
-    Create a text file.
+    Create a text file if it doesn't already exist.
     """
-    with open(file_path, 'w') as f:
-        if contents:
-            f.write(contents)
+    if os.path.isfile(file_path):
+        return
+
+    try:
+        with open(file_path, 'w') as f:
+            if contents:
+                f.write(contents)
+    except Exception:
+        raise ValueError(f'Unable to create {file_path}.')
 
 
 def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
@@ -130,20 +136,22 @@ def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
 
     # Populate csv contents list
     for study_id, features_to_counts in feature_table.items():
-        for feature, count in features_to_counts.items():
+        for feature, abundance in features_to_counts.items():
             try:
                 taxon = features_to_taxa['Taxon'][feature]
                 confidence = features_to_taxa['Confidence'][feature]
             except KeyError:
                 raise ValueError(f'Feature ID {feature} is missing in {taxonomy_results_path}.')
 
-            csv_contents.append(f'{study_id},{taxon},{confidence},{count}\n')
+            csv_contents.append(f'{study_id},{taxon},{confidence},{int(abundance)}\n')
 
     # Create the csv file
-    with open(os.path.join(output_dir, 'results.csv'), "w") as results:
-        results.write('Run_ID,Taxon,Confidence,Count\n')
+    results_csv_path = os.path.join(output_dir, 'results.csv')
+    with open(results_csv_path, "w") as results:
+        results.write('acc,taxon,confidence,abundance\n')
         results.writelines(csv_contents)
 
+    return results_csv_path
 
 def unzip(zip_file_path, output_dir):
     """
@@ -151,3 +159,12 @@ def unzip(zip_file_path, output_dir):
     """
     with ZipFile(zip_file_path, 'r') as z:
         z.extractall(path=output_dir)
+
+
+def is_file_owned_by_me(file_path):
+    """
+    Return true if I am the owner of the given file. Otherwise, return false.
+    """
+    file_owner = getpwuid(os.stat(file_path).st_uid).pw_name
+    myself = getpwuid(os.getuid()).pw_name
+    return file_owner == myself

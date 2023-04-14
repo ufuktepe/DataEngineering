@@ -1,12 +1,12 @@
 import csv
 import os
 
-import pandas as pd
-
-from .invalid_study_error import InvalidStudyError
 import utils
+from database_manager.db_error import DBError
+from database_manager.db_manager import db_manager
 from static import constants as const
 from static.layout import Layout
+from .invalid_study_error import InvalidStudyError
 
 # Define titles for the manifest file.
 MANIFEST_TITLES = {Layout.SINGLE: ['sample-id', 'absolute-filepath'],
@@ -37,16 +37,10 @@ class Study:
 
         self.id = os.path.normpath(os.path.basename(self.parent_dir))
 
-        # Identify the file path for metadata.
-        try:
-            self.metadata_path = self.get_metadata()
-        except FileNotFoundError:
-            raise InvalidStudyError(msg='No metadata found!', study_id=self.id)
-
         # Identify the sequencing layout (SINGLE or PAIRED).
         try:
-            self.layout = self.extract_layout()
-        except ValueError:
+            self.layout = db_manager.get_layout(run_id=self.id).lower()
+        except DBError:
             raise InvalidStudyError(msg='Unable to identify the sequencing layout type!', study_id=self.id)
 
         # Generate the manifest file.
@@ -86,43 +80,6 @@ class Study:
     @layout.setter
     def layout(self, value):
         self._layout = value
-
-    def get_metadata(self):
-        """
-        Return the first csv file found in the given directory. Raise a FileNotFoundError if no csv file exists.
-        """
-        for root, sub_dirs, file_names in os.walk(self.parent_dir):
-            for file_name in file_names:
-                if file_name.endswith(const.METADATA_EXT) and not file_name.startswith('.'):
-                    return os.path.join(root, file_name)
-
-        raise FileNotFoundError
-
-    def extract_layout(self):
-        """
-        Extract the sequencing layout from the metadata and return it. Raise a ValueError if layout cannot be
-        identified.
-        """
-        # Create a metadata dictionary
-
-        metadata = pd.read_csv(self.metadata_path, index_col=0).to_dict()
-
-        # Verify that the metadata includes a layout column
-        if const.LAYOUT_TITLE not in metadata:
-            raise ValueError
-
-        # Verify that the metadata includes the study id
-        if self.id not in metadata[const.LAYOUT_TITLE]:
-            raise ValueError
-
-        layout = metadata[const.LAYOUT_TITLE][self.id].lower()
-
-        if layout == Layout.SINGLE:
-            return Layout.SINGLE
-        elif layout == Layout.PAIRED:
-            return Layout.PAIRED
-
-        raise ValueError
 
     def map_samples_to_files(self):
         """
@@ -185,24 +142,21 @@ class Study:
     @staticmethod
     def is_ready_for_processing(file_names):
         """
-        Check if the given list of file names include a metadata file, a sequencing file, a complete marker file and
-        doesn't include processed marker and error marker files. If so then return true. Otherwise, return false.
+        Check if the given list of file names include a sequencing file, a complete marker file and doesn't include
+        claimed marker or error marker files. If so then return true. Otherwise, return false.
         """
-        has_metadata = False
         is_download_complete = False
         has_sequencing_data = False
 
         for file_name in file_names:
-            if file_name.endswith(const.METADATA_EXT):
-                has_metadata = True
-            elif file_name.endswith(const.SEQUENCING_EXT):
+            if file_name.endswith(const.SEQUENCING_EXT):
                 has_sequencing_data = True
             elif file_name == const.COMPLETE_MARKER:
                 is_download_complete = True
-            elif file_name == const.PROCESSED_MARKER or file_name == const.ERROR_MARKER:
+            elif file_name == const.CLAIMED_MARKER or file_name == const.ERROR_MARKER:
                 return False
 
-        if has_metadata and is_download_complete and has_sequencing_data:
+        if is_download_complete and has_sequencing_data:
             return True
 
         return False

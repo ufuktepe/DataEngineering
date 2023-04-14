@@ -6,13 +6,18 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 CONDA_PATH = 'conda_path'
-LOGGER_PATH = 'logger_path'
 LOGGING_LEVEL = 'logging_level'
-POST_PROCESSOR_API_IP = 'post_processor_api_ip'
-POST_PROCESSOR_API_PORT = 'post_processor_api_port'
+DB_HOST = 'db_host'
+DB_PORT = 'db_port'
+DB_USERNAME = 'db_username'
+DB_PASSWORD = 'db_password'
+DB_NAME = 'db_name'
+DB_TABLE_METADATA = 'db_table_metadata'
+DB_TABLE_RESULTS = 'db_table_results'
+DB_TABLE_STATUS = 'db_table_status'
 LOGGING_LEVELS = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20, 'DEBUG': 10, 'NOTSET': 0}
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, CONDA_PATH, LOGGER_PATH, LOGGING_LEVEL, POST_PROCESSOR_API_IP,
-               POST_PROCESSOR_API_PORT}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, CONDA_PATH, LOGGING_LEVEL, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD,
+               DB_NAME, DB_TABLE_METADATA, DB_TABLE_RESULTS, DB_TABLE_STATUS}
 
 
 class Config:
@@ -62,10 +67,6 @@ class Config:
         return self.config.get(CONDA_PATH, None)
 
     @property
-    def logger_path(self):
-        return self.config.get(LOGGER_PATH, None)
-
-    @property
     def logging_level(self):
         if LOGGING_LEVEL not in self.config:
             return None
@@ -73,12 +74,36 @@ class Config:
         return LOGGING_LEVELS.get(level, None)
 
     @property
-    def post_processing_api_ip(self):
-        return self.config.get(POST_PROCESSOR_API_IP, None)
+    def db_host(self):
+        return self.config.get(DB_HOST, None)
 
     @property
-    def post_processing_api_port(self):
-        return self.config.get(POST_PROCESSOR_API_PORT, None)
+    def db_port(self):
+        return self.config.get(DB_PORT, None)
+
+    @property
+    def db_username(self):
+        return self.config.get(DB_USERNAME, None)
+
+    @property
+    def db_password(self):
+        return self.config.get(DB_PASSWORD, None)
+
+    @property
+    def db_name(self):
+        return self.config.get(DB_NAME, None)
+
+    @property
+    def db_table_metadata(self):
+        return self.config.get(DB_TABLE_METADATA, None)
+
+    @property
+    def db_table_results(self):
+        return self.config.get(DB_TABLE_RESULTS, None)
+
+    @property
+    def db_table_status(self):
+        return self.config.get(DB_TABLE_STATUS, None)
 
 
 # Singleton

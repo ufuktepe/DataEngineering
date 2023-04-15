@@ -48,9 +48,16 @@ def create_dir(directory):
     """
     Create a new directory. Overwrite if it already exists.
     """
+    remove_dir(directory)
+    os.makedirs(directory)
+
+
+def remove_dir(directory):
+    """
+    Delete the given directory if it exists.
+    """
     if os.path.exists(directory):
         shutil.rmtree(directory)
-    os.makedirs(directory)
 
 
 def copy_file(src, dst):

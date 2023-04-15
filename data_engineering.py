@@ -90,10 +90,17 @@ class DataEngineering:
 
         study_id = os.path.basename(directory)
 
-        db_manager.update_status(run_id=study_id, status=Status.PROCESSING)
+        # Update the status and retrieve attributes using the run ID.
+        try:
+            db_manager.update_status(run_id=study_id, status=Status.PROCESSING)
+            user_id = db_manager.get_user_id(run_id=study_id)
+            is_public = db_manager.is_run_public(run_id=study_id)
+        except DBError as e:
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
+            return
 
         self.logger.debug(f'Processing {study_id}')
-        study = Study(directory)
+        study = Study(parent_dir=directory, user_id=user_id, is_public=is_public)
         try:
             study.setup()
         except InvalidStudyError as e:
@@ -132,7 +139,15 @@ class DataEngineering:
             return
 
         self.logger.info(f'{study.id} | Process Completed. Runtime: {utils.get_runtime(start_time)}')
-        db_manager.update_status(run_id=study_id, status=Status.SUCCESS)
+
+        try:
+            db_manager.update_status(run_id=study_id, status=Status.SUCCESS, output_path=pipeline.get_output_dir())
+        except DBError as e:
+            self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
+            return
+
+        # Clean up
+        self.remove_input_dir(directory)
 
     def error_out(self, study_id, error_msg, directory):
         """
@@ -141,6 +156,16 @@ class DataEngineering:
         self.logger.error(f'{study_id} | {error_msg}')
         utils.create_txt(file_path=os.path.join(directory, const.ERROR_MARKER), contents=error_msg)
         db_manager.update_status(run_id=study_id, status=Status.ERROR)
+
+    def remove_input_dir(self, directory):
+        """
+        Delete the folder that includes Qiime2 input files.
+        """
+        try:
+            utils.remove_dir(directory)
+        except Exception:
+            # Leave the folder if another process is using it.
+            pass
 
 
 def main():
@@ -153,6 +178,9 @@ def main():
         return
 
     data_engineering.run()
+    # db_manager.create_init_status('ERR6004692', False, 'dummy_user_10')
+    # db_manager.create_init_status('ERR6004724', True, None)
+    # db_manager.create_init_status('ERR6004725', False, 'dummy_user_10')
 
 
 if __name__ == '__main__':

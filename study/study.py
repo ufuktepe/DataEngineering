@@ -18,8 +18,10 @@ class Study:
     Represents a microbiome study that includes one or more fastq files and a metadata.
     """
 
-    def __init__(self, parent_dir):
+    def __init__(self, parent_dir, user_id, is_public):
         self.parent_dir = parent_dir  # Parent directory for the study.
+        self.user_id = user_id        # ID of the user that added the study
+        self.is_public = is_public    # Boolean indicating whether the study is public or private
         self.id = None                # Run ID for the study
         self.metadata_path = None     # File path for the metadata file.
         self.manifest_path = None     # File path for the manifest file.
@@ -56,6 +58,22 @@ class Study:
     @parent_dir.setter
     def parent_dir(self, value):
         self._parent_dir = value
+
+    @property
+    def user_id(self):
+        return self._user_id
+
+    @user_id.setter
+    def user_id(self, value):
+        self._user_id = value
+
+    @property
+    def is_public(self):
+        return self._is_public
+
+    @is_public.setter
+    def is_public(self, value):
+        self._is_public = value
 
     @property
     def id(self):

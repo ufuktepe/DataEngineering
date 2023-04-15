@@ -25,7 +25,7 @@ class Pipeline(ABC):
         self.id = study.id
 
         # Directory for Qiime2 results.
-        self.output_dir = os.path.join(study.parent_dir, 'output')
+        self.output_dir = self.set_output_dir(study)
 
         # Path for the manifest file.
         self.manifest_path = study.manifest_path
@@ -59,6 +59,17 @@ class Pipeline(ABC):
 
         # List of commands to be executed.
         self.commands = []
+
+    def set_output_dir(self, study):
+        """
+        Set the output directory for Qiime2 results.
+        """
+        # Check if study is private
+        if study.user_id and not study.is_public:
+            return os.path.join(config.private_results_path, study.user_id, study.id)
+
+        # Public study
+        return os.path.join(config.public_results_path, study.id)
 
     def get_feature_table_path(self):
         return self.tsv_table_path

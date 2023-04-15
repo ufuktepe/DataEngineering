@@ -70,17 +70,7 @@ class DBManager:
         Return the layout for the given run ID.
         """
         connection = self.get_connection()
-
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(f"""SELECT {const.LAYOUT_TITLE} FROM {self.metadata_table} WHERE acc='{run_id}'""")
-                row = cursor.fetchone()
-                return row[0] if row else None
-        except Exception as e:
-            raise DBError(msg=str(e))
-        finally:
-            if connection is not None:
-                connection.close()
+        return self.fetch_one(connection, const.LAYOUT_TITLE, self.metadata_table, run_id)
 
     def post_results(self, csv_path):
         """
@@ -100,12 +90,17 @@ class DBManager:
             if connection is not None:
                 connection.close()
 
-    def update_status(self, run_id, status):
+    def update_status(self, run_id, status, output_path=None):
         """
         Update the status table for the given run ID.
         """
         connection = self.get_connection()
-        sql_stmnt = f""" UPDATE {self.status_table} SET status={status}, updated_at=NOW() WHERE acc='{run_id}'"""
+
+        if output_path:
+            sql_stmnt = f""" UPDATE {self.status_table} SET status={status}, output_path='{output_path}', 
+            updated_at=NOW() WHERE acc='{run_id}'"""
+        else:
+            sql_stmnt = f""" UPDATE {self.status_table} SET status={status}, updated_at=NOW() WHERE acc='{run_id}'"""
 
         try:
             with connection.cursor() as cursor:
@@ -117,12 +112,48 @@ class DBManager:
             if connection is not None:
                 connection.close()
 
-    def create_init_status(self, run_id):
+    def get_user_id(self, run_id):
+        """
+        Return the user id for the given run id.
+        """
+        connection = self.get_connection()
+        return self.fetch_one(connection, 'user_id', self.status_table, run_id)
+
+    def is_run_public(self, run_id):
+        """
+        Return true if the run with the given ID is public. Otherwise, return false.
+        """
+        connection = self.get_connection()
+        return self.fetch_one(connection, 'public', self.status_table, run_id)
+
+    def fetch_one(self, connection, attribute, table, run_id):
+        """
+        Return the value of the attribute for the given run ID in the table.
+        """
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(f"""SELECT {attribute} FROM {table} WHERE acc='{run_id}'""")
+                row = cursor.fetchone()
+                return row[0] if row else None
+        except Exception as e:
+            raise DBError(msg=str(e))
+        finally:
+            if connection is not None:
+                connection.close()
+
+    def create_init_status(self, run_id, is_public, user_id):
         connection = self.get_connection()
         status = 0
 
-        sql_stmnt = f"""INSERT INTO {self.status_table} (acc, status, created_at, updated_at) VALUES ('{run_id}',
-         {status},NOW(), NOW())"""
+        if user_id is None:
+            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at) VALUES (
+            '{run_id}', {is_public},
+             {status},NOW(), NOW())"""
+        else:
+            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, user_id, public, status, created_at, updated_at) 
+            VALUES (
+                        '{run_id}', '{user_id}', {is_public},
+                         {status},NOW(), NOW())"""
 
         try:
             with connection.cursor() as cursor:

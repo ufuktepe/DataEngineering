@@ -5,18 +5,37 @@
   env: qiime2-2022.2
 
   # Conda path
-  conda_path: /home/qiime2/miniconda/bin/conda
+  conda_path: /Users/dummy/miniconda/bin/conda
+
+  # Path for Qiime2 private results
+  private_results_path: path_to_private_results
+
+  # Path for Qiime2 public results
+  public_results_path: path_to_public_results
 
   # Logging level for the logger (CRITICAL, ERROR, WARNING, INFO, DEBUG, or NOTSET)
   logging_level: DEBUG
 
-  # Post Processor API IPv4 address
-  post_processor_api_ip: 127.0.0.1
+  # Database server
+  db_host: end-point
 
-  # Post Processor API port number
-  post_processor_api_port: 8000
+  # Database port
+  db_port: 5432
 
-  # Database table that includes Qiime2 results
-  qiime2_results_table: qiime2_results
+  # Database username
+  db_username: username
 
+  # Database password
+  db_password: password
 
+  # Database name
+  db_name: DBName
+
+  # Database metadata table
+  db_table_metadata: metadata
+
+  # Database Qiime2 results table
+  db_table_results: results
+
+  # Database status table
+  db_table_status: status

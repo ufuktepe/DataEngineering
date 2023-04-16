@@ -96,14 +96,14 @@ class Pipeline(ABC):
                                             msg=f'{self.id} | Converting the Feature Table to tsv.'))
 
         # Command to generate a qzv feature table.
-        self.commands.append(FeatureTableSummarizeCmd(input_path=self.qza_table_path,
-                                                      output_path=self.qzv_table_path,
-                                                      msg=f'{self.id} | Converting the Feature Table to qzv.'))
+        # self.commands.append(FeatureTableSummarizeCmd(input_path=self.qza_table_path,
+        #                                               output_path=self.qzv_table_path,
+        #                                               msg=f'{self.id} | Converting the Feature Table to qzv.'))
 
         # Command to export representative sequences in fasta format.
-        self.commands.append(ExportCmd(input_path=self.rep_seqs_path,
-                                       output_path=self.output_dir,
-                                       msg=f'{self.id} | Exporting Representative Sequences.'))
+        # self.commands.append(ExportCmd(input_path=self.rep_seqs_path,
+        #                                output_path=self.output_dir,
+        #                                msg=f'{self.id} | Exporting Representative Sequences.'))
 
         # Command to execute taxonomy analysis.
         self.commands.append(FeatureClassifierCmd(input_path=self.rep_seqs_path,
@@ -117,9 +117,9 @@ class Pipeline(ABC):
                                        msg=f'{self.id} | Exporting Taxonomy Analysis Results.'))
 
         # Command to generate a qzv for taxonomy results.
-        self.commands.append(MetadataTabulateCmd(input_path=self.qza_taxonomy_path,
-                                                 output_path=self.qzv_taxonomy_path,
-                                                 msg=f'{self.id} | Converting Taxonomy results to qzv.'))
+        # self.commands.append(MetadataTabulateCmd(input_path=self.qza_taxonomy_path,
+        #                                          output_path=self.qzv_taxonomy_path,
+        #                                          msg=f'{self.id} | Converting Taxonomy results to qzv.'))
 
     def execute(self):
         """

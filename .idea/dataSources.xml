@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="NcbiSraPostgress@ncbisrapostgress.cp1zd8eys4m3.us-east-1.rds.amazonaws.com" uuid="ac619e0b-8197-4de8-aeb8-e736a6a039f6">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ncbisrapostgress.cp1zd8eys4m3.us-east-1.rds.amazonaws.com:5432/NcbiSraPostgress</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

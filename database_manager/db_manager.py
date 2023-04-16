@@ -92,25 +92,25 @@ class DBManager:
 
     def update_status(self, run_id, status, output_path=None):
         """
-        Update the status table for the given run ID.
+        Update the status table for the given run ID. If the record doesn't exist, create the record first.
         """
         connection = self.get_connection()
 
+        # Create the record if it doesn't exist.
+        if not self.fetch_one(connection=connection, attribute='acc', table=self.status_table, run_id=run_id,
+                              close_connection=False):
+            sql_stmnt_insert = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at) 
+                                    VALUES ('{run_id}', TRUE, 0, NOW(), NOW())"""
+            self.execute_statement(connection=connection, sql_stmnt=sql_stmnt_insert, close_connection=False)
+
+        # Update the record.
         if output_path:
-            sql_stmnt = f""" UPDATE {self.status_table} SET status={status}, output_path='{output_path}', 
+            sql_stmnt_update = f""" UPDATE {self.status_table} SET status={status}, output_path='{output_path}', 
             updated_at=NOW() WHERE acc='{run_id}'"""
         else:
-            sql_stmnt = f""" UPDATE {self.status_table} SET status={status}, updated_at=NOW() WHERE acc='{run_id}'"""
+            sql_stmnt_update = f""" UPDATE {self.status_table} SET status={status}, updated_at=NOW() WHERE acc='{run_id}'"""
 
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql_stmnt)
-            connection.commit()
-        except Exception as e:
-            raise DBError(msg=str(e))
-        finally:
-            if connection is not None:
-                connection.close()
+        self.execute_statement(connection=connection, sql_stmnt=sql_stmnt_update)
 
     def get_user_id(self, run_id):
         """
@@ -119,6 +119,13 @@ class DBManager:
         connection = self.get_connection()
         return self.fetch_one(connection, 'user_id', self.status_table, run_id)
 
+    def get_email(self, run_id):
+        """
+        Return the email for the given run id.
+        """
+        connection = self.get_connection()
+        return self.fetch_one(connection, 'email', self.status_table, run_id)
+
     def is_run_public(self, run_id):
         """
         Return true if the run with the given ID is public. Otherwise, return false.
@@ -126,9 +133,10 @@ class DBManager:
         connection = self.get_connection()
         return self.fetch_one(connection, 'public', self.status_table, run_id)
 
-    def fetch_one(self, connection, attribute, table, run_id):
+    def fetch_one(self, connection, attribute, table, run_id, close_connection=True):
         """
-        Return the value of the attribute for the given run ID in the table.
+        Return the value of the attribute for the given run ID in the table. Close the connection if close_connection is
+        true.
         """
         try:
             with connection.cursor() as cursor:
@@ -138,23 +146,13 @@ class DBManager:
         except Exception as e:
             raise DBError(msg=str(e))
         finally:
-            if connection is not None:
+            if close_connection and connection is not None:
                 connection.close()
 
-    def create_init_status(self, run_id, is_public, user_id):
-        connection = self.get_connection()
-        status = 0
-
-        if user_id is None:
-            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at) VALUES (
-            '{run_id}', {is_public},
-             {status},NOW(), NOW())"""
-        else:
-            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, user_id, public, status, created_at, updated_at) 
-            VALUES (
-                        '{run_id}', '{user_id}', {is_public},
-                         {status},NOW(), NOW())"""
-
+    def execute_statement(self, connection, sql_stmnt, close_connection=True):
+        """
+        Execute the given sql statement and commit. Close the connection if close_connection is true.
+        """
         try:
             with connection.cursor() as cursor:
                 cursor.execute(sql_stmnt)
@@ -162,9 +160,21 @@ class DBManager:
         except Exception as e:
             raise DBError(msg=str(e))
         finally:
-            if connection is not None:
+            if close_connection and connection is not None:
                 connection.close()
 
+    def create_init_status(self, run_id, is_public, user_id, email):
+        connection = self.get_connection()
+        status = 0
+
+        if user_id is None:
+            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at) VALUES (
+            '{run_id}', {is_public}, {status},NOW(), NOW())"""
+        else:
+            sql_stmnt = f"""INSERT INTO {self.status_table} (acc, user_id, email, public, status, created_at, 
+            updated_at) VALUES ('{run_id}', '{user_id}', '{email}', {is_public}, {status},NOW(), NOW())"""
+
+        self.execute_statement(connection=connection, sql_stmnt=sql_stmnt)
 
 
 # Singleton

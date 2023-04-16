@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
-import json
 import os
 import sys
 import time
 
-import psycopg2
-import requests
+import boto3
+from botocore.exceptions import ClientError
 
 import utils
 from config import config
@@ -15,9 +14,9 @@ from database_manager.db_manager import db_manager
 from pipeline.pipeline_error import PipelineError
 from pipeline.pipeline_factory import PipelineFactory
 from static import constants as const
+from static.status import Status
 from study.study import InvalidStudyError
 from study.study import Study
-from static.status import Status
 
 LOGGER_NAME = 'data_engineering'
 
@@ -66,7 +65,6 @@ class DataEngineering:
 
         print(f'Monitoring {directory}')
         while True:
-            time.sleep(3)
             for root, sub_dirs, file_names in os.walk(directory):
                 if Study.is_ready_for_processing(file_names):
                     # Claim the study
@@ -77,6 +75,7 @@ class DataEngineering:
 
                     # Process the study
                     self.process_study(root)
+            time.sleep(3)
 
     def process_study(self, directory):
         """
@@ -94,6 +93,7 @@ class DataEngineering:
         try:
             db_manager.update_status(run_id=study_id, status=Status.PROCESSING)
             user_id = db_manager.get_user_id(run_id=study_id)
+            email = db_manager.get_email(run_id=study_id)
             is_public = db_manager.is_run_public(run_id=study_id)
         except DBError as e:
             self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
@@ -149,6 +149,10 @@ class DataEngineering:
         # Clean up
         self.remove_input_dir(directory)
 
+        # Inform the client
+        if email:
+            self.send_email(recipient=email, run_id=study_id)
+
     def error_out(self, study_id, error_msg, directory):
         """
         Log the error message, create an error text file, and update the status table.
@@ -164,8 +168,66 @@ class DataEngineering:
         try:
             utils.remove_dir(directory)
         except Exception:
-            # Leave the folder if another process is using it.
+            # Leave the folder as is if another process is using it.
             pass
+
+    def send_email(self, recipient, run_id):
+        """
+        Send an email to the client indicating the given run ID has been processed.
+        """
+        sender = "Microbiome Platform <microbiome.platform@gmail.com>"
+        aws_region = "us-west-2"
+        subject = "Process Completed"
+
+        # Email body for non-HTML email clients.
+        body_text = f'{run_id} has been processed and added to Microbiome Platform.'
+
+        # The HTML body of the email.
+        body_html = f"""<html>
+        <head></head>
+        <body>
+          <p>{run_id} has been processed and added to Microbiome Platform.</p>
+        </body>
+        </html>
+                    """
+
+        charset = "UTF-8"
+
+        client = boto3.client('ses', region_name=aws_region)
+
+        # Try to send the email.
+        try:
+            # Provide the contents of the email.
+            response = client.send_email(
+                Destination={
+                    'ToAddresses': [
+                        recipient,
+                    ],
+                },
+                Message={
+                    'Body': {
+                        'Html': {
+                            'Charset': charset,
+                            'Data': body_html,
+                        },
+                        'Text': {
+                            'Charset': charset,
+                            'Data': body_text,
+                        },
+                    },
+                    'Subject': {
+                        'Charset': charset,
+                        'Data': subject,
+                    },
+                },
+                Source=sender,
+            )
+        # Display an error if something goes wrong.
+        except ClientError as e:
+            self.logger.debug(f"{run_id} | {e.response['Error']['Message']}")
+            print(e.response['Error']['Message'])
+        else:
+            self.logger.debug(f'{run_id} | Email sent to {recipient} successfully.')
 
 
 def main():
@@ -178,9 +240,9 @@ def main():
         return
 
     data_engineering.run()
-    # db_manager.create_init_status('ERR6004692', False, 'dummy_user_10')
-    # db_manager.create_init_status('ERR6004724', True, None)
-    # db_manager.create_init_status('ERR6004725', False, 'dummy_user_10')
+    # db_manager.create_init_status('ERR6004692', False, 'user_777', 'bufuktepe@gmail.com')
+    # db_manager.create_init_status('ERR6004724', True, None, None)
+    # db_manager.create_init_status('ERR6004725', False, 'user_777', 'bufuktepe@gmail.com')
 
 
 if __name__ == '__main__':

@@ -6,6 +6,7 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 CONDA_PATH = 'conda_path'
+INPUT_PATH = 'input_path'
 PRIVATE_RESULTS_PATH = 'private_results_path'
 PUBLIC_RESULTS_PATH = 'public_results_path'
 AWS_ACCESS_KEY_ID = 'aws_access_key_id'
@@ -20,9 +21,9 @@ DB_TABLE_METADATA = 'db_table_metadata'
 DB_TABLE_RESULTS = 'db_table_results'
 DB_TABLE_STATUS = 'db_table_status'
 LOGGING_LEVELS = {'CRITICAL': 50, 'ERROR': 40, 'WARNING': 30, 'INFO': 20, 'DEBUG': 10, 'NOTSET': 0}
-CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, CONDA_PATH, PRIVATE_RESULTS_PATH, PUBLIC_RESULTS_PATH, AWS_ACCESS_KEY_ID,
-               AWS_SECRET_ACCESS_KEY, LOGGING_LEVEL, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME,
-               DB_TABLE_METADATA, DB_TABLE_RESULTS, DB_TABLE_STATUS}
+CONFIG_KEYS = {CLASSIFIER_FILE_NAME, ENV, CONDA_PATH, INPUT_PATH, PRIVATE_RESULTS_PATH, PUBLIC_RESULTS_PATH,
+               AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, LOGGING_LEVEL, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD,
+               DB_NAME, DB_TABLE_METADATA, DB_TABLE_RESULTS, DB_TABLE_STATUS}
 
 
 class Config:
@@ -74,6 +75,10 @@ class Config:
     @property
     def conda_path(self):
         return self.config.get(CONDA_PATH, None)
+
+    @property
+    def input_path(self):
+        return self.config.get(INPUT_PATH, None)
 
     @property
     def private_results_path(self):

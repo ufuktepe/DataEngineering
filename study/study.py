@@ -23,7 +23,6 @@ class Study:
         self.user_id = user_id        # ID of the user that added the study
         self.is_public = is_public    # Boolean indicating whether the study is public or private
         self.id = None                # Run ID for the study
-        self.metadata_path = None     # File path for the metadata file.
         self.manifest_path = None     # File path for the manifest file.
         self.layout = None            # Sequencing layout, single-end or paired-end reads.
         self.manifest_titles = []     # List of titles for the manifest file.

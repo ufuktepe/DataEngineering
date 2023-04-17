@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 import time
 
 import boto3
@@ -49,18 +48,11 @@ class DataEngineering:
         Constantly crawl the given directory to find downloaded studies. Process all studies that are ready to be
         processed.
         """
-        # Check arguments.
-        if len(sys.argv) != 2:
-            print('Please provide an input directory.')
-            return
-
-        # Get the directory.
-        directory = sys.argv[1]
-        # directory = '/Volumes/Burak_HDD/qiime2/small_subset_test'
+        directory = config.input_path
 
         # Validate the directory.
         if not os.path.isdir(directory):
-            print('Please provide a valid directory.')
+            print(f'{directory} is not a valid directory.')
             return
 
         print(f'Monitoring {directory}')
@@ -230,20 +222,3 @@ class DataEngineering:
             self.logger.debug(f'{run_id} | Email sent to {recipient} successfully.')
 
 
-def main():
-    data_engineering = DataEngineering()
-
-    try:
-        data_engineering.setup()
-    except ValueError as e:
-        print(e)
-        return
-
-    data_engineering.run()
-    # db_manager.create_init_status('ERR6004692', False, 'user_777', 'bufuktepe@gmail.com')
-    # db_manager.create_init_status('ERR6004724', True, None, None)
-    # db_manager.create_init_status('ERR6004725', False, 'user_777', 'bufuktepe@gmail.com')
-
-
-if __name__ == '__main__':
-    main()

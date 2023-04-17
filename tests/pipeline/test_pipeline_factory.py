@@ -13,7 +13,8 @@ from study.study import InvalidStudyError, Study
 
 @pytest.fixture(scope="session", autouse=True)
 def configure():
-    config.setup()
+    config.config['public_results_path'] = os.getcwd()
+    config.config['private_results_path'] = os.getcwd()
 
 def test_study_with_invalid_layout():
     Study.layout = Mock(return_value=None)

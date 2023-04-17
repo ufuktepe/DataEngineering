@@ -134,7 +134,9 @@ class Study:
         be mapped to fastq files.
         """
         # Map samples to fastq file paths.
+        print('samples_to_files = self.map_samples_to_files()')
         samples_to_files = self.map_samples_to_files()
+        print(f'samples_to_files: {samples_to_files}')
         if not samples_to_files:
             raise FileNotFoundError
 

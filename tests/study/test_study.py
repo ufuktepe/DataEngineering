@@ -14,7 +14,7 @@ def test_invalid_parent_dir():
         study.setup()
 
 def test_missing_fastq_files():
-    study = Study(parent_dir=os.getcwd(), user_id='', is_public='')
+    study = Study(parent_dir=os.path.dirname(os.path.dirname(__file__)), user_id='', is_public='')
     db_manager.get_layout = Mock(return_value='single')
     with pytest.raises(InvalidStudyError):
         study.setup()

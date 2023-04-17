@@ -1,18 +1,17 @@
 import pytest
 
-import config
+from config import *
 from data_engineering import DataEngineering
 
 
 def test_missing_config_file():
     data_engineering = DataEngineering()
-    config.CONFIG_PATH = ''
     with pytest.raises(ValueError):
-        data_engineering.setup()
+        data_engineering.setup(config_file_name=None)
 
 
 def test_invalid_input_directory():
     data_engineering = DataEngineering()
-    config.app_config.attributes['input_path'] = None
+    app_config.attributes['input_path'] = None
     with pytest.raises(ValueError):
         data_engineering.run()

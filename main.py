@@ -1,11 +1,13 @@
 from data_engineering import DataEngineering
 
+CONFIG_FILE_NAME = 'config.yaml'
+
 
 def main():
     data_engineering = DataEngineering()
 
     try:
-        data_engineering.setup()
+        data_engineering.setup(CONFIG_FILE_NAME)
     except ValueError as e:
         print(e)
         return

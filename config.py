@@ -2,7 +2,6 @@ import os
 
 import yaml
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.yaml')
 CLASSIFIER_FILE_NAME = 'classifier_file_name'
 ENV = 'env'
 CONDA_PATH = 'conda_path'
@@ -33,14 +32,19 @@ class Config:
     def __init__(self):
         self.attributes = {}
 
-    def setup(self):
+    def setup(self, config_file_name):
         """
         Load the configuration file and populate the config dictionary.
         """
-        if not os.path.exists(CONFIG_PATH):
-            raise FileExistsError(f'{CONFIG_PATH} does not exist!')
+        if not isinstance(config_file_name, str) or not len(config_file_name):
+            raise ValueError(f'Invalid configuration file name!')
 
-        with open(CONFIG_PATH, 'r') as yaml_file:
+        config_file_path = os.path.join(os.path.dirname(__file__), config_file_name)
+
+        if not os.path.exists(config_file_path):
+            raise FileExistsError(f'{config_file_path} does not exist!')
+
+        with open(config_file_path, 'r') as yaml_file:
             config_data = yaml.safe_load(yaml_file)
             if not config_data:
                 raise ValueError(f'Configuration file error!')

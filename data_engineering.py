@@ -27,12 +27,12 @@ class DataEngineering:
     def __init__(self):
         self.logger = None
 
-    def setup(self):
+    def setup(self, config_file_name):
         """
         Set up the configuration, logger, and db manager.
         """
         try:
-            app_config.setup()
+            app_config.setup(config_file_name)
         except FileExistsError as e:
             raise ValueError(e)
 

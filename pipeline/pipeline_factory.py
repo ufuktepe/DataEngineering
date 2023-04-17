@@ -19,8 +19,6 @@ class PipelineFactory:
         identified.
         """
         try:
-            x = PIPELINES[study.layout]
-            y = 5
             return PIPELINES[study.layout](study, logger_name)
         except KeyError:
             raise InvalidStudyError(msg='Unsupported study type!', study_id='N/A')

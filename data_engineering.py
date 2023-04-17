@@ -7,7 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 import utils
-from config import config
+from config import app_config
 from database_manager.db_error import DBError
 from database_manager.db_manager import db_manager
 from pipeline.pipeline_error import PipelineError
@@ -32,14 +32,14 @@ class DataEngineering:
         Set up the configuration, logger, and db manager.
         """
         try:
-            config.setup()
+            app_config.setup()
         except FileExistsError as e:
             raise ValueError(e)
 
-        self.logger = utils.setup_logger(logger_name=LOGGER_NAME, logging_level=config.logging_level)
+        self.logger = utils.setup_logger(logger_name=LOGGER_NAME, logging_level=app_config.logging_level)
 
         try:
-            db_manager.setup(config)
+            db_manager.setup(app_config)
         except DBError as e:
             raise ValueError(e)
 
@@ -48,12 +48,11 @@ class DataEngineering:
         Constantly crawl the given directory to find downloaded studies. Process all studies that are ready to be
         processed.
         """
-        directory = config.input_path
+        directory = app_config.input_path
 
         # Validate the directory.
-        if not os.path.isdir(directory):
-            print(f'{directory} is not a valid directory.')
-            return
+        if directory is None or not os.path.isdir(directory):
+            raise ValueError(f'{directory} is not a valid directory.')
 
         print(f'Monitoring {directory}')
         while True:

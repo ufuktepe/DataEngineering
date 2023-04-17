@@ -114,7 +114,7 @@ class Study:
         for file_path in file_paths:
             file_name = os.path.basename(file_path)
 
-            # Skip the file if the file name has no underscores.
+            # Skip the file if the file name has no underscores and the layout is paired.
             if '_' not in file_name and self.layout == Layout.PAIRED:
                 continue
 

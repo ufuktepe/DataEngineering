@@ -9,7 +9,7 @@ from .commands.feature_table_summarize_cmd import FeatureTableSummarizeCmd
 from .commands.metadata_tabulate_cmd import MetadataTabulateCmd
 from .pipeline_error import PipelineError
 import utils
-from config import config
+from config import app_config
 from static.file_format import FileFormat
 
 
@@ -64,12 +64,23 @@ class Pipeline(ABC):
         """
         Set the output directory for Qiime2 results.
         """
+        # Check if study id exists.
+        if study.id is None:
+            raise PipelineError(msg='Pipeline error: missing study id.', study_id=self.id)
+
         # Check if study is private
         if study.user_id and not study.is_public:
-            return os.path.join(config.private_results_path, study.user_id, study.id)
+            if app_config.private_results_path is None:
+                raise PipelineError(msg='Pipeline error: missing private results path.', study_id=self.id)
+
+            return os.path.join(app_config.private_results_path, study.user_id, study.id)
+
+        # Check if public results path exists.
+        if app_config.public_results_path is None:
+            raise PipelineError(msg='Pipeline error: missing public results path.', study_id=self.id)
 
         # Public study
-        return os.path.join(config.public_results_path, study.id)
+        return os.path.join(app_config.public_results_path, study.id)
 
     def get_feature_table_path(self):
         return self.tsv_table_path
@@ -107,7 +118,7 @@ class Pipeline(ABC):
 
         # Command to execute taxonomy analysis.
         self.commands.append(FeatureClassifierCmd(input_path=self.rep_seqs_path,
-                                                  classifier_path=config.classifier_path,
+                                                  classifier_path=app_config.classifier_path,
                                                   output_path=self.qza_taxonomy_path,
                                                   msg=f'{self.id} | Running Taxonomy Analysis.'))
 
@@ -129,7 +140,7 @@ class Pipeline(ABC):
 
         for command in self.commands:
             self.logger.debug(command.get_msg())
-            return_code = utils.run_conda_command(cmd=str(command), conda_path=config.conda_path, env=config.env)
+            return_code = utils.run_conda_command(cmd=str(command), conda_path=app_config.conda_path, env=app_config.env)
             if return_code != 0:
                 raise PipelineError(msg='Pipeline error.', study_id=self.id)
 

@@ -85,6 +85,7 @@ class DataEngineering:
             db_manager.update_status(run_id=study_id, status=Status.PROCESSING)
             user_id = db_manager.get_user_id(run_id=study_id)
             email = db_manager.get_email(run_id=study_id)
+            email_notification = db_manager.get_email_notification_preference(run_id=study_id)
             is_public = db_manager.is_run_public(run_id=study_id)
         except DBError as e:
             self.error_out(study_id=study_id, error_msg=str(e), directory=directory)
@@ -141,7 +142,7 @@ class DataEngineering:
         self.remove_input_dir(directory)
 
         # Inform the client
-        if email:
+        if email and email_notification:
             self.send_email(recipient=email, run_id=study_id)
 
     def error_out(self, study_id, error_msg, directory):

@@ -126,6 +126,13 @@ class DBManager:
         connection = self.get_connection()
         return self.fetch_one(connection, 'email', self.status_table, run_id)
 
+    def get_email_notification_preference(self, run_id):
+        """
+        Return the email notification preference for the given run id.
+        """
+        connection = self.get_connection()
+        return self.fetch_one(connection, 'email_notification', self.status_table, run_id)
+
     def is_run_public(self, run_id):
         """
         Return true if the run with the given ID is public. Otherwise, return false.

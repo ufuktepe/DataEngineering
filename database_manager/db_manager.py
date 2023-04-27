@@ -99,8 +99,9 @@ class DBManager:
         # Create the record if it doesn't exist.
         if not self.fetch_one(connection=connection, attribute='acc', table=self.status_table, run_id=run_id,
                               close_connection=False):
-            sql_stmnt_insert = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at) 
-                                    VALUES ('{run_id}', TRUE, 0, NOW(), NOW())"""
+            sql_stmnt_insert = f"""INSERT INTO {self.status_table} (acc, public, status, created_at, updated_at, 
+            email_notification) 
+                                    VALUES ('{run_id}', TRUE, 0, NOW(), NOW(), FALSE)"""
             self.execute_statement(connection=connection, sql_stmnt=sql_stmnt_insert, close_connection=False)
 
         # Update the record.

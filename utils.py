@@ -124,7 +124,7 @@ def create_txt(file_path, contents=''):
         raise ValueError(f'Unable to create {file_path}.')
 
 
-def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
+def create_results_csv(study_id, feature_table_path, taxonomy_results_path, output_dir):
     """
     Create a csv file that includes Qiime2 results.
     """
@@ -142,7 +142,7 @@ def create_results_csv(feature_table_path, taxonomy_results_path, output_dir):
     csv_contents = []
 
     # Populate csv contents list
-    for study_id, features_to_counts in feature_table.items():
+    for features_to_counts in feature_table.values():
         for feature, abundance in features_to_counts.items():
             try:
                 taxon = features_to_taxa['Taxon'][feature]

@@ -115,7 +115,8 @@ class DataEngineering:
 
         self.logger.debug(f'{study.id} | Creating the results csv file.')
         try:
-            results_csv_path = utils.create_results_csv(feature_table_path=pipeline.get_feature_table_path(),
+            results_csv_path = utils.create_results_csv(study_id=study_id,
+                                                        feature_table_path=pipeline.get_feature_table_path(),
                                                         taxonomy_results_path=pipeline.get_taxonomy_results_path(),
                                                         output_dir=pipeline.get_output_dir())
         except ValueError as e:
@@ -172,13 +173,13 @@ class DataEngineering:
         subject = "Process Completed"
 
         # Email body for non-HTML email clients.
-        body_text = f'{run_id} has been processed and added to Microbiome Platform.'
+        body_text = f'{run_id} has been processed successfully.'
 
         # The HTML body of the email.
         body_html = f"""<html>
         <head></head>
         <body>
-          <p>{run_id} has been processed and added to Microbiome Platform.</p>
+          <p>{run_id} has been processed successfully.</p>
         </body>
         </html>
                     """
